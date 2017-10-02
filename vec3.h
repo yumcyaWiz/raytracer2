@@ -58,7 +58,7 @@ Vec3 operator*(float k, const Vec3& v) {
 Vec3 operator/(float k, const Vec3& v) {
     return Vec3(k / v.x, k / v.y, k / v.z);
 }
-std::ostream& operator<<(std::ostream stream, const Vec3& v) {
+std::ostream& operator<<(std::ostream& stream, const Vec3& v) {
     stream << "(" << v.x << ", " << v.y << ", " << v.z << ")" << std::endl;
 }
 
@@ -69,3 +69,4 @@ float dot(const Vec3& v1, const Vec3& v2) {
 Vec3 cross(const Vec3& v1, const Vec3& v2) {
     return Vec3(v1.y*v2.z - v1.z*v2.y, v1.z*v2.x - v1.x*v2.z, v1.x*v2.y - v1.y*v2.x);
 }
+#endif
