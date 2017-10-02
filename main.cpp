@@ -1,6 +1,7 @@
 #include <iostream>
 #include "vec3.h"
 #include "rgb.h"
+#include "ray.h"
 
 
 int main() {
