@@ -39,10 +39,15 @@ class Vec3 {
         };
 
 
-        float length() {
+        Vec3 operator-() const {
+            return Vec3(-x, -y, -z);
+        };
+
+
+        float length() const {
             return std::sqrt(x*x + y*y + z*z);
         };
-        float length2() {
+        float length2() const {
             return x*x + y*y + z*z;
         }
 };
@@ -69,4 +74,9 @@ float dot(const Vec3& v1, const Vec3& v2) {
 Vec3 cross(const Vec3& v1, const Vec3& v2) {
     return Vec3(v1.y*v2.z - v1.z*v2.y, v1.z*v2.x - v1.x*v2.z, v1.x*v2.y - v1.y*v2.x);
 }
+
+
+Vec3 normalize(const Vec3& v) {
+    return v/v.length();
+};
 #endif
