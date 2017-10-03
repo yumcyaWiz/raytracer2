@@ -4,6 +4,7 @@
 #include "ray.h"
 #include "image.h"
 #include "sampler.h"
+#include "object.h"
 
 
 int main() {
