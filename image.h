@@ -42,8 +42,8 @@ class Image {
 
             for(int j = 0; j < height; j++) {
                 for(int i = 0; i < width; i++) {
-                    RGB col = clamp(this->get(i, j), RGB(0), RGB(255));
-                    file << (int)col.r << " " << (int)col.g << " " << (int)col.b << std::endl;
+                    RGB col = clamp(this->get(i, j), RGB(0), RGB(1));
+                    file << (int)(255.f*col.r) << " " << (int)(255.f*col.g) << " " << (int)(255.f*col.b) << std::endl;
                 }
             }
 

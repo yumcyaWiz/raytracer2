@@ -11,6 +11,7 @@ class RGB {
         RGB() { r = g = b = 0; };
         RGB(float _r) : r(_r), g(_r), b(_r) {};
         RGB(float _r, float _g, float _b) : r(_r), g(_g), b(_b) {};
+        RGB(const Vec3& v) : r(v.x), g(v.y), b(v.z) {};
 
 
         RGB operator+(const RGB& c) const {

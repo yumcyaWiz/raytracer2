@@ -19,7 +19,7 @@ class Camera {
 
 
         Ray getRay(float u, float v) const {
-            return normalize(camForward + u*camRight + v*camUp);
+            return Ray(camPos, normalize(camForward + u*camRight + v*camUp));
         };
 };
 #endif
