@@ -1,18 +1,21 @@
 #include <iostream>
-#include "vec3.h"
-#include "rgb.h"
-#include "ray.h"
 #include "image.h"
 #include "camera.h"
-#include "sampler.h"
-#include "object.h"
-#include "material.h"
+#include "objects.h"
 #include "render.h"
+#include "sky.h"
 
 
 int main() {
     Image img(512, 512);
-    Render render(img);
+    Camera cam(Vec3(0, 0, 0), Vec3(0, 0, 1));
+
+    Objects objs;
+    objs.add(new Sphere(Vec3(0, -10001.0f, 0), 10000.0f, new Diffuse(1.0f), new Mono(RGB(1.0f))));
+    objs.add(new Sphere(Vec3(0, 0, 3), 1.0f, new Diffuse(1.0f), new Mono(RGB(0, 0, 1.0f))));
+
+    Render render(cam, objs, new testSky(), img);
     render.render();
+
     return 0;
 }

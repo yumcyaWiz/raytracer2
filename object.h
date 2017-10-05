@@ -4,8 +4,15 @@
 #include "vec3.h"
 #include "ray.h"
 #include "hit.h"
+#include "material.h"
+#include "texture.h"
 class Object {
     public:
+        std::shared_ptr<Material> mat;
+        std::shared_ptr<Texture> tex;
+
+        Object(Material* _mat, Texture* _tex) : mat(std::shared_ptr<Material>(_mat)), tex(std::shared_ptr<Texture>(_tex)) {};
+
         virtual bool intersect(const Ray& ray, Hit& res) = 0;
 };
 class Sphere : public Object {
@@ -18,7 +25,7 @@ class Sphere : public Object {
         Vec3 center;
 
 
-        Sphere(const Vec3& _center, float _radius, float _theta_min = 0.0f, float _theta_max = M_PI, float _phi_min = 0.0f, float _phi_max = 2.0f*M_PI) : center(_center), radius(_radius), 
+        Sphere(const Vec3& _center, float _radius, Material* _mat, Texture* _tex, float _theta_min = 0.0f, float _theta_max = M_PI, float _phi_min = 0.0f, float _phi_max = 2.0f*M_PI) : Object(_mat, _tex), center(_center), radius(_radius), 
         theta_min(_theta_min), theta_max(_theta_max), phi_min(_phi_min), phi_max(_phi_max) {};
 
 
@@ -41,6 +48,7 @@ class Sphere : public Object {
             res.ray = ray;
             res.hitPos = ray(t);
             res.hitNormal = normalize(res.hitPos - center);
+            res.hitObj = this;
 
             float phi = std::atan2(res.hitNormal.z, res.hitNormal.x) + M_PI;
             float theta = std::atan(res.hitNormal.y/std::sqrt(res.hitNormal.x*res.hitNormal.x + res.hitNormal.z*res.hitNormal.z)) + M_PI/2.0f;

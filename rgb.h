@@ -1,6 +1,7 @@
 #ifndef RGB_H
 #define RGB_H
 #include "util.h"
+#include "vec3.h"
 class RGB {
     public:
         float r;
@@ -17,15 +18,39 @@ class RGB {
         RGB operator+(const RGB& c) const {
             return RGB(r + c.r, g + c.g, b + c.b);
         };
+        RGB operator+(float k) const {
+            return RGB(r + k, g + k, b + k);
+        };
         RGB operator-(const RGB& c) const {
             return RGB(r - c.r, g - c.g, b - c.b);
+        };
+        RGB operator-(float k) const {
+            return RGB(r - k, g - k, b - k);
         };
         RGB operator*(const RGB& c) const {
             return RGB(r * c.r, g * c.g, b * c.b);
         };
+        RGB operator*(float k) const {
+            return RGB(r * k, g * k, b * k);
+        };
         RGB operator/(const RGB& c) const {
             return RGB(r / c.r, g / c.g, b / c.b);
         };
+        RGB operator/(float k) const {
+            return RGB(r / k, g / k, b / k);
+        };
+};
+RGB operator+(float k, const RGB& c) {
+    return RGB(k + c.r, k + c.g, k * c.b);
+};
+RGB operator-(float k, const RGB& c) {
+    return RGB(k - c.r, k - c.g, k - c.b);
+};
+RGB operator*(float k, const RGB& c) {
+    return RGB(k * c.r, k * c.g, k * c.b);
+};
+RGB operator/(float k, const RGB& c) {
+    return RGB(k / c.r, k / c.g, k / c.b);
 };
 
 

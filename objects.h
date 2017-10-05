@@ -4,6 +4,7 @@
 #include <memory>
 #include "vec3.h"
 #include "hit.h"
+#include "object.h"
 class Objects {
     public:
         std::vector<std::shared_ptr<Object>> objects;
