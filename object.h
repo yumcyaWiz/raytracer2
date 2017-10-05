@@ -18,7 +18,7 @@ class Sphere : public Object {
         Vec3 center;
 
 
-        Sphere(const Vec3& _center, float _radius, float _theta_min, float _theta_max, float _phi_min, float _phi_max) : center(_center), radius(_radius), 
+        Sphere(const Vec3& _center, float _radius, float _theta_min = 0.0f, float _theta_max = M_PI, float _phi_min = 0.0f, float _phi_max = 2.0f*M_PI) : center(_center), radius(_radius), 
         theta_min(_theta_min), theta_max(_theta_max), phi_min(_phi_min), phi_max(_phi_max) {};
 
 
@@ -41,9 +41,9 @@ class Sphere : public Object {
             res.ray = ray;
             res.hitPos = ray(t);
             res.hitNormal = normalize(res.hitPos - center);
-            
-            float theta = std::atan2(ray.origin.z, ray.origin.x) + M_PI;
-            float phi = (std::atan2(ray.origin.y, std::sqrt(ray.origin.x*ray.origin.x + ray.origin.z*ray.origin.z)) + M_PI)/2.0f;
+
+            float phi = std::atan2(res.hitNormal.z, res.hitNormal.x) + M_PI;
+            float theta = std::atan(res.hitNormal.y/std::sqrt(res.hitNormal.x*res.hitNormal.x + res.hitNormal.z*res.hitNormal.z)) + M_PI/2.0f;
             if(theta < theta_min || theta > theta_max || phi < phi_min || phi > phi_max)
                 return false;
 
