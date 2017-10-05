@@ -49,5 +49,12 @@ class Image {
 
             file.close();
         };
+        void divide(float n) {
+            for(int i = 0; i < height; i++) {
+                for(int j = 0; j < width; j++) {
+                    this->set(i, j, this->get(i, j)/n);
+                }
+            }
+        };
 };
 #endif

@@ -54,6 +54,9 @@ class Sphere : public Object {
             float theta = std::atan(res.hitNormal.y/std::sqrt(res.hitNormal.x*res.hitNormal.x + res.hitNormal.z*res.hitNormal.z)) + M_PI/2.0f;
             if(theta < theta_min || theta > theta_max || phi < phi_min || phi > phi_max)
                 return false;
+            //res.u = phi/(2.0f*M_PI);
+            //res.v = theta/M_PI;
+            res.u = res.v = 0.0f;
 
             return true;
         };
