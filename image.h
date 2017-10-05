@@ -11,14 +11,12 @@ class Image {
         int height;
         RGB *data;
 
-
         Image(int _width, int _height) : width(_width), height(_height) {
             data = new RGB[width*height];
         };
         ~Image() {
             delete[] data;
         };
-
 
         RGB get(int i, int j) const {
             if(i < 0 || i >= width || j < 0 || j >= height) {
@@ -53,6 +51,13 @@ class Image {
             for(int i = 0; i < height; i++) {
                 for(int j = 0; j < width; j++) {
                     this->set(i, j, this->get(i, j)/n);
+                }
+            }
+        };
+        void gamma_correlation() {
+            for(int i = 0; i < height; i++) {
+                for(int j = 0; j < width; j++) {
+                    this->set(i, j, pow(this->get(i, j), 1.0f/2.2f));
                 }
             }
         };

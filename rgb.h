@@ -57,4 +57,7 @@ RGB operator/(float k, const RGB& c) {
 RGB clamp(const RGB& c, const RGB& cmin, const RGB& cmax) {
     return RGB(clamp(c.r, cmin.r, cmax.r), clamp(c.g, cmin.g, cmax.g), clamp(c.b, cmin.b, cmax.b));
 }
+RGB pow(const RGB& c, float p) {
+    return RGB(std::pow(c.r, p), std::pow(c.g, p), std::pow(c.b, p));
+}
 #endif
