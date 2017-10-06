@@ -1,6 +1,7 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 #include <cmath>
+#include "vec2.h"
 #include "vec3.h"
 #include "ray.h"
 #include "hit.h"
@@ -69,6 +70,35 @@ class Sphere : public Object {
 
 
 class Plane : public Object {
+    public:
+        Vec3 pos;
+        Vec3 normal;
+        Vec2 size;
+
+        Plane(const Vec3& _pos, const Vec3& _normal, const Vec2& _size, Material* mat, Texture* tex) : Object(mat, tex), pos(_pos), normal(_normal), size(_size) {};
+
+        bool intersect(const Ray& ray, Hit& res) {
+            float t = dot(pos - ray.origin, normal)/dot(ray.direction, normal);
+            if(t < ray.tmin || t > ray.tmax)
+                return false;
+
+            Vec3 hitPos = ray(t);
+            Vec3 posDif = hitPos - pos;
+            if(std::abs(posDif.x) > size.x || std::abs(posDif.y) > size.y)
+                return false;
+
+            res.t = t;
+            res.hitPos = hitPos;
+            res.hitNormal = normal;
+            res.hitObj = this;
+            res.inside = dot(ray.direction, res.hitNormal) > 0;
+            if(res.inside)
+                res.hitNormal = -res.hitNormal;
+            res.u = 0.0f;
+            res.v = 0.0f;
+
+            return true;
+        };
 };
 class Box : public Object {
 };

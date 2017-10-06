@@ -10,6 +10,7 @@ class Vec3 {
         
 
         Vec3() { x = y = z = 0; };
+        Vec3(float _x) : x(_x), y(_x), z(_x) {};
         Vec3(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {};
 
 
@@ -74,6 +75,11 @@ inline float dot(const Vec3& v1, const Vec3& v2) {
 inline Vec3 cross(const Vec3& v1, const Vec3& v2) {
     return Vec3(v1.y*v2.z - v1.z*v2.y, v1.z*v2.x - v1.x*v2.z, v1.x*v2.y - v1.y*v2.x);
 }
+
+
+inline float distance(const Vec3& v1, const Vec3& v2) {
+    return (v1 - v2).length();
+};
 
 
 inline Vec3 normalize(const Vec3& v) {
