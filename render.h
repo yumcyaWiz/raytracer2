@@ -28,7 +28,7 @@ class Render {
 
         RGB Li(const Ray& ray, int depth) {
             if(depth > 10)
-                return RGB(1.0);
+                return RGB(1.0f);
 
             Hit res;
             if(objs->intersect(ray, res)) {

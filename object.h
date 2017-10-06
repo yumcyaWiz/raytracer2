@@ -15,6 +15,8 @@ class Object {
 
         virtual bool intersect(const Ray& ray, Hit& res) = 0;
 };
+
+
 class Sphere : public Object {
     public:
         float radius;
@@ -49,6 +51,10 @@ class Sphere : public Object {
             res.hitPos = ray(t);
             res.hitNormal = normalize(res.hitPos - center);
             res.hitObj = this;
+            res.inside = dot(ray.direction, res.hitNormal) > 0;
+            if(res.inside)
+                res.hitNormal = -res.hitNormal;
+
 
             float phi = std::atan2(res.hitNormal.z, res.hitNormal.x) + M_PI;
             float theta = std::atan(res.hitNormal.y/std::sqrt(res.hitNormal.x*res.hitNormal.x + res.hitNormal.z*res.hitNormal.z)) + M_PI/2.0f;
@@ -59,6 +65,10 @@ class Sphere : public Object {
 
             return true;
         };
+};
+
+
+class Plane : public Object {
 };
 class Box : public Object {
 };

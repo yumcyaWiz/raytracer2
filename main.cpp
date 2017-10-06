@@ -15,7 +15,7 @@ int main() {
 
     Objects *objs = new Objects();
     objs->add(new Sphere(Vec3(0, -101.0f, 0), 100.0f, new Diffuse(0.9f), new Checkerboard(new Mono(RGB(0.1f)), new Mono(RGB(1.0f)), 0.1f)));
-    objs->add(new Sphere(Vec3(0, 0, 0), 1.0f, new Diffuse(0.9f), new Checkerboard(new Mono(RGB(0.1f)), new Mono(RGB(1.0f)), 0.1f)));
+    objs->add(new Sphere(Vec3(0, 0, 0), 1.0f, new Glass(1.4f), new Mono(RGB(1.0f)))); 
 
     Render render(cam, objs, new testSky(), img, 10);
     render.render();

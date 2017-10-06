@@ -15,7 +15,7 @@ class testSky : public Sky {
 
 
         RGB get(const Ray& ray) {
-            float t = ray.direction.y;
+            float t = (ray.direction.y + 1.0f)*0.5f;
             return (1.0f - t)*RGB(1.0f) + t*RGB(0.7, 0.9, 1.0);
         };
 };

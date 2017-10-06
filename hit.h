@@ -13,6 +13,7 @@ class Hit {
         float u;
         float v;
         Object* hitObj;
+        bool inside;
 
         Hit() {};
 };
