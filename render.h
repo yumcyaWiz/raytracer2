@@ -7,6 +7,7 @@
 #include "image.h"
 #include "sky.h"
 #include "sampler.h"
+#include "timer.h"
 class Render {
     public:
         Camera* cam;
@@ -37,15 +38,17 @@ class Render {
                 Ray nextRay;
                 float nextRay_pdf;
                 if(mat->scatter(res, nextRay, nextRay_pdf))
-                    return tex->get(res.u, res.v) * mat->brdf(res.hitPos, res.ray.direction, nextRay.direction)/nextRay_pdf * Li(nextRay, depth + 1);
+                    return tex->get(res) * mat->brdf(res.hitPos, res.ray.direction, nextRay.direction)/nextRay_pdf * Li(nextRay, depth + 1);
                 else
-                    return tex->get(res.u, res.v);
+                    return tex->get(res);
             }
             else {
                 return sky->get(ray);
             }
         }
         void render() {
+            Timer t;
+            t.start();
             #pragma omp parallel for schedule(dynamic, 1)
             for(int k = 0; k < samples; k++) {
                 for(int i = 0; i < img->height; i++) {
@@ -59,6 +62,7 @@ class Render {
                 if(omp_get_thread_num() == 0)
                     std::cout << progressbar(k, samples) << " " << percentage(k, samples) << "\r" << std::flush; 
             }
+            t.stop();
             img->divide(float(samples));
             img->gamma_correlation();
             img->ppm_output("output.ppm");

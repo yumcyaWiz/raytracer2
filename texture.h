@@ -1,11 +1,12 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 #include "rgb.h"
+#include "hit.h"
 #include <memory>
 #include <cmath>
 class Texture {
     public:
-        virtual RGB get(float u, float v) = 0;
+        virtual RGB get(const Hit& res) = 0;
 };
 
 
@@ -15,16 +16,16 @@ class Mono : public Texture {
 
         Mono(const RGB& _col) : col(_col) {};
 
-        RGB get(float u, float v) {
+        RGB get(const Hit& res) {
             return col;
         };
 };
 
 
-class TextTexture : public Texture {
+class TestTexture : public Texture {
     public:
-        RGB get(float u, float v) {
-            return RGB(u, v, 0.0f);
+        RGB get(const Hit& res) {
+            return RGB(res.u, res.v, 0.0f);
         };
 };
 
@@ -35,15 +36,14 @@ class Checkerboard : public Texture {
         std::shared_ptr<Texture> even;
         float scale;
 
-
         Checkerboard(Texture* _odd, Texture* _even, float _scale) : odd(std::shared_ptr<Texture>(_odd)), even(std::shared_ptr<Texture>(_even)), scale(_scale) {};
 
-        RGB get(float u, float v) {
-            float f = std::sin(u/scale * 2.0f*M_PI)*std::sin(v/scale * 2.0f*M_PI);
+        RGB get(const Hit& res) {
+            float f = std::sin(res.hitPos.x/scale)*std::sin(res.hitPos.y/scale)*std::sin(res.hitPos.z/scale);
             if(f > 0)
-                return odd->get(u, v);
+                return odd->get(res);
             else
-                return even->get(u, v);
+                return even->get(res);
         };
 };
 
@@ -57,7 +57,7 @@ class ImageTexture : public Texture {
         ImageTexture(char* filename) {
         };
 
-        RGB get(float u, float v) {
+        RGB get(const Hit& res) {
             return RGB(1.0);
         };
 };
