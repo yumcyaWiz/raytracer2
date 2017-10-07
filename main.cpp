@@ -17,10 +17,12 @@ int main() {
     Camera *cam = new Camera(camPos, camForward);
 
     Objects *objs = new Objects();
-    objs->add(new Sphere(Vec3(0, -1001, 0), 1000.0f, new Diffuse(0.9f), new Mono(RGB(1.0f))));
-    objs->add(new Sphere(Vec3(0, 0, 0), 1.0f, new Diffuse(0.9f), new Mono(RGB(0.0f, 1.0f, 0.0f)))); 
+    objs->add(new Sphere(Vec3(0, -10001, 0), 10000.0f, new Diffuse(0.9f), new Checkerboard(new Mono(RGB(0.9f)), new Mono(RGB(0.1f)), 0.1f)));
+    objs->add(new Sphere(Vec3(0, 0, 0), 1.0f, new Diffuse(0.9f), new Mono(RGB(1.0f, 0.5f, 0.0f))));
 
-    Render render(cam, objs, new testSky(), img, 10);
+    Sky *sky = new simpleSky();
+
+    Render render(cam, objs, sky, img, 10);
     render.render();
 
     return 0;
