@@ -8,8 +8,8 @@
 #include "sampler.h"
 class Material {
     public:
-        virtual bool scatter(const Hit& hit, Ray& nextRay, float& pdf) = 0;
-        virtual float brdf(const Vec3& hitPos, const Vec3& ray_in, const Vec3& ray_out) = 0;
+        virtual bool scatter(const Hit& hit, Ray& nextRay, float& pdf) const = 0;
+        virtual float brdf(const Vec3& hitPos, const Vec3& ray_in, const Vec3& ray_out) const = 0;
 };
 
 
@@ -19,14 +19,13 @@ class Diffuse : public Material {
 
         Diffuse(float _r) : reflectivity(_r) {};
 
-        bool scatter(const Hit& res, Ray& nextRay, float& pdf) {
-            nextRay = Ray(res.hitPos, normalize(res.hitNormal + random_in_unitSphere()));
-            pdf = 1.0f;
+        bool scatter(const Hit& res, Ray& nextRay, float& pdf) const {
+            nextRay = Ray(res.hitPos, normalize(res.hitNormal + random_in_unitSphere())); 
+            pdf = dot(-res.ray.direction, res.hitNormal)/M_PI;
             return true;
         };
-        float brdf(const Vec3& hitPos, const Vec3& ray_in, const Vec3& ray_out) {
-            float cos_term = 1.0f;
-            return reflectivity/cos_term; 
+        float brdf(const Vec3& hitPos, const Vec3& ray_in, const Vec3& ray_out) const {
+            return reflectivity/M_PI;
         };
 };
 
@@ -37,18 +36,18 @@ class Mirror : public Material {
 
         Mirror(float _r) : reflectivity(_r) {};
 
-        bool scatter(const Hit& res, Ray& nextRay, float& pdf) {
+        bool scatter(const Hit& res, Ray& nextRay, float& pdf) const {
             nextRay = Ray(res.hitPos, reflect(res.ray.direction, res.hitNormal));
-            pdf = 1.0f;
+            pdf = dot(-res.ray.direction, res.hitNormal);
             return true;
         };
-        float brdf(const Vec3& hitPos, const Vec3& ray_in, const Vec3& ray_out) {
+        float brdf(const Vec3& hitPos, const Vec3& ray_in, const Vec3& ray_out) const {
             return reflectivity;
         };
 };
 
 
-inline float fresnel(float n1, float n2, Vec3 v, Vec3 n) {
+inline float fresnel(float n1, float n2, const Vec3& v, const Vec3& n) {
     float f0 = std::pow((n1 - n2)/(n1 + n2), 2.0);
     return f0 + (1.0 - f0)*std::pow(1.0 - dot(-v, n), 5.0);
 }
@@ -58,8 +57,8 @@ class Glass : public Material {
 
         Glass(float _IOR) : IOR(_IOR) {};
 
-        bool scatter(const Hit& res, Ray& nextRay, float& pdf) {
-            pdf = 1.0f;
+        bool scatter(const Hit& res, Ray& nextRay, float& pdf) const {
+            pdf = dot(-res.ray.direction, res.hitNormal);
             if(!res.inside) {
                 float fr = fresnel(1.0f, IOR, res.ray.direction, res.hitNormal);
                 if(rnd() < fr) {
@@ -97,8 +96,12 @@ class Glass : public Material {
                 }
             }
         };
-        float brdf(const Vec3& hitPos, const Vec3& ray_in, const Vec3& ray_out) {
+        float brdf(const Vec3& hitPos, const Vec3& ray_in, const Vec3& ray_out) const {
             return 1.0f;
         };
+};
+
+
+class Emissive : public Material {
 };
 #endif

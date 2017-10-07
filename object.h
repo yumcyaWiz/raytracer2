@@ -14,7 +14,7 @@ class Object {
 
         Object(Material* _mat, Texture* _tex) : mat(std::shared_ptr<Material>(_mat)), tex(std::shared_ptr<Texture>(_tex)) {};
 
-        virtual bool intersect(const Ray& ray, Hit& res) = 0;
+        virtual bool intersect(const Ray& ray, Hit& res) const = 0;
 };
 
 
@@ -32,7 +32,7 @@ class Sphere : public Object {
         theta_min(_theta_min), theta_max(_theta_max), phi_min(_phi_min), phi_max(_phi_max) {};
 
 
-        bool intersect(const Ray& ray, Hit& res) {
+        bool intersect(const Ray& ray, Hit& res) const {
             float b = dot(ray.direction, ray.origin - center);
             float c = (ray.origin - center).length2() - radius*radius;
             float D = b*b - c;
@@ -51,11 +51,10 @@ class Sphere : public Object {
             res.ray = ray;
             res.hitPos = ray(t);
             res.hitNormal = normalize(res.hitPos - center);
-            res.hitObj = this;
+            res.hitObj = const_cast<Sphere*>(this);
             res.inside = dot(ray.direction, res.hitNormal) > 0;
             if(res.inside)
                 res.hitNormal = -res.hitNormal;
-
 
             float phi = std::atan2(res.hitNormal.z, res.hitNormal.x) + M_PI;
             float theta = std::atan(res.hitNormal.y/std::sqrt(res.hitNormal.x*res.hitNormal.x + res.hitNormal.z*res.hitNormal.z)) + M_PI/2.0f;
@@ -77,7 +76,7 @@ class Plane : public Object {
 
         Plane(const Vec3& _pos, const Vec3& _normal, const Vec2& _size, Material* mat, Texture* tex) : Object(mat, tex), pos(_pos), normal(_normal), size(_size) {};
 
-        bool intersect(const Ray& ray, Hit& res) {
+        bool intersect(const Ray& ray, Hit& res) const {
             float t = dot(pos - ray.origin, normal)/dot(ray.direction, normal);
             if(t < ray.tmin || t > ray.tmax)
                 return false;
@@ -90,7 +89,7 @@ class Plane : public Object {
             res.t = t;
             res.hitPos = hitPos;
             res.hitNormal = normal;
-            res.hitObj = this;
+            res.hitObj = const_cast<Plane*>(this);
             res.inside = dot(ray.direction, res.hitNormal) > 0;
             if(res.inside)
                 res.hitNormal = -res.hitNormal;

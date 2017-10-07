@@ -90,7 +90,7 @@ inline Vec3 normalize(const Vec3& v) {
 inline Vec3 reflect(const Vec3& v_in, const Vec3& normal) {
     return v_in + 2.0*dot(-v_in, normal)*normal;
 }
-inline bool refract(Vec3 v, Vec3 n, float n1, float n2, Vec3& res) {
+inline bool refract(const Vec3& v, const Vec3& n, float n1, float n2, Vec3& res) {
     float eta = n1/n2;
     float cosI = dot(-v, n);
     float sin2I = std::max(0.0, 1.0 - cosI*cosI);
@@ -101,4 +101,5 @@ inline bool refract(Vec3 v, Vec3 n, float n1, float n2, Vec3& res) {
     res = eta*v + (eta*cosI - cosT)*n;
     return true;
 }
+
 #endif

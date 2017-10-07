@@ -17,8 +17,8 @@ int main() {
     Camera *cam = new Camera(camPos, camForward);
 
     Objects *objs = new Objects();
-    objs->add(new Plane(Vec3(0, -1, 0), Vec3(0, 1, 0), Vec2(5.0f), new Diffuse(0.9f), new Mono(RGB(1.0f))));
-    objs->add(new Sphere(Vec3(0, 0, 0), 1.0f, new Glass(1.4f), new Mono(RGB(1.0f)))); 
+    objs->add(new Sphere(Vec3(0, -1001, 0), 1000.0f, new Diffuse(0.9f), new Mono(RGB(1.0f))));
+    objs->add(new Sphere(Vec3(0, 0, 0), 1.0f, new Diffuse(0.9f), new Mono(RGB(0.0f, 1.0f, 0.0f)))); 
 
     Render render(cam, objs, new testSky(), img, 10);
     render.render();

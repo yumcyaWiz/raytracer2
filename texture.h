@@ -6,7 +6,7 @@
 #include <cmath>
 class Texture {
     public:
-        virtual RGB get(const Hit& res) = 0;
+        virtual RGB get(const Hit& res) const = 0;
 };
 
 
@@ -16,7 +16,7 @@ class Mono : public Texture {
 
         Mono(const RGB& _col) : col(_col) {};
 
-        RGB get(const Hit& res) {
+        RGB get(const Hit& res) const {
             return col;
         };
 };
@@ -24,7 +24,7 @@ class Mono : public Texture {
 
 class TestTexture : public Texture {
     public:
-        RGB get(const Hit& res) {
+        RGB get(const Hit& res) const {
             return RGB(res.u, res.v, 0.0f);
         };
 };
@@ -38,7 +38,7 @@ class Checkerboard : public Texture {
 
         Checkerboard(Texture* _odd, Texture* _even, float _scale) : odd(std::shared_ptr<Texture>(_odd)), even(std::shared_ptr<Texture>(_even)), scale(_scale) {};
 
-        RGB get(const Hit& res) {
+        RGB get(const Hit& res) const {
             float f = std::sin(res.hitPos.x/scale)*std::sin(res.hitPos.y/scale)*std::sin(res.hitPos.z/scale);
             if(f > 0)
                 return odd->get(res);
@@ -57,7 +57,7 @@ class ImageTexture : public Texture {
         ImageTexture(char* filename) {
         };
 
-        RGB get(const Hit& res) {
+        RGB get(const Hit& res) const {
             return RGB(1.0);
         };
 };
