@@ -40,7 +40,7 @@ class Render {
                 Ray nextRay;
                 float nextRay_pdf;
                 if(mat->scatter(res, nextRay, nextRay_pdf))
-                    return tex->get(res) * mat->brdf(res.hitPos, res.ray.direction, nextRay.direction)/nextRay_pdf * dot(-res.ray.direction, res.hitNormal) * Li(nextRay, depth + 1);
+                    return tex->get(res) * mat->brdf(res.hitPos, res.ray.direction, nextRay.direction)/nextRay_pdf * dot(nextRay.direction, res.hitNormal) * Li(nextRay, depth + 1);
                 else
                     return tex->get(res);
             }

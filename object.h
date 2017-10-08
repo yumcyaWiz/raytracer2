@@ -3,6 +3,8 @@
 #include <cmath>
 #include "vec2.h"
 #include "vec3.h"
+#include "point3.h"
+#include "normal.h"
 #include "ray.h"
 #include "hit.h"
 #include "material.h"
@@ -12,8 +14,15 @@ class Object {
     public:
         std::shared_ptr<Material> mat;
         std::shared_ptr<Texture> tex;
+        std::shared_ptr<Transform> objectToWorld;
+        std::shared_ptr<Transform> worldToObject;
 
-        Object(Material* _mat, Texture* _tex) : mat(std::shared_ptr<Material>(_mat)), tex(std::shared_ptr<Texture>(_tex)) {};
+        Object(Transform* _objectToWorld, Transform* _worldToObject, Material* _mat, Texture* _tex) {
+            mat = std::shared_ptr<Material>(_mat);
+            tex = std::shared_ptr<Texture>(_tex);
+            objectToWorld = std::shared_ptr<Transform>(_objectToWorld);
+            worldToObject = std::shared_ptr<Transform>(_worldToObject);
+        };
 
         virtual bool intersect(const Ray& ray, Hit& res) const = 0;
 };
@@ -26,21 +35,21 @@ class Sphere : public Object {
         float theta_max;
         float phi_min;
         float phi_max;
-        Vec3 center;
 
 
-        Sphere(const Vec3& _center, float _radius, Material* _mat, Texture* _tex, float _theta_min = 0.0f, float _theta_max = M_PI, float _phi_min = 0.0f, float _phi_max = 2.0f*M_PI) : Object(_mat, _tex), center(_center), radius(_radius), 
-        theta_min(_theta_min), theta_max(_theta_max), phi_min(_phi_min), phi_max(_phi_max) {};
+        Sphere(float _radius, Transform* _objectToWorld, Transform* _worldToObject, Material* _mat, Texture* _tex, float _theta_min = 0.0f, float _theta_max = M_PI, float _phi_min = 0.0f, float _phi_max = 2.0f*M_PI) : Object(_objectToWorld, _worldToObject, _mat, _tex), radius(_radius), theta_min(_theta_min), theta_max(_theta_max), phi_min(_phi_min), phi_max(_phi_max) {};
 
 
-        bool intersect(const Ray& ray, Hit& res) const {
-            float b = dot(ray.direction, ray.origin - center);
-            float c = (ray.origin - center).length2() - radius*radius;
-            float D = b*b - c;
+        bool intersect(const Ray& r, Hit& res) const {
+            Ray ray = (*worldToObject)(r);
+            float a = ray.direction.length2();
+            float b = 2.0*dot(ray.origin, ray.direction);
+            float c = (ray.origin - Point3()).length2() - radius*radius;
+            float D = b*b - 4*a*c;
             if(D < 0)
                 return false;
-            float t1 = -b + std::sqrt(D);
-            float t2 = -b - std::sqrt(D);
+            float t1 = (-b + std::sqrt(D))/(2.0*a);
+            float t2 = (-b - std::sqrt(D))/(2.0*a);
             float t = t2;
             if(t < ray.tmin || t > ray.tmax) {
                 t = t1;
@@ -48,21 +57,26 @@ class Sphere : public Object {
             if(t < ray.tmin || t > ray.tmax) {
                 return false;
             }
+            Point3 hitPos = ray(t);
+
             res.t = t;
             res.ray = ray;
-            res.hitPos = ray(t);
-            res.hitNormal = normalize(res.hitPos - center);
+            res.hitPos = hitPos;
+            res.hitNormal = Normal(normalize(res.hitPos - Point3()));
             res.hitObj = const_cast<Sphere*>(this);
             res.inside = dot(ray.direction, res.hitNormal) > 0;
             if(res.inside)
                 res.hitNormal = -res.hitNormal;
 
-            float phi = std::atan2(res.hitNormal.z, res.hitNormal.x) + M_PI;
-            float theta = std::atan(res.hitNormal.y/std::sqrt(res.hitNormal.x*res.hitNormal.x + res.hitNormal.z*res.hitNormal.z)) + M_PI/2.0f;
+            float phi = std::atan2(hitPos.z, hitPos.x);
+            if(phi < 0) phi += 2*M_PI;
+            float theta = std::acos(hitPos.y/radius);
             if(theta < theta_min || theta > theta_max || phi < phi_min || phi > phi_max)
                 return false;
-            res.u = phi/(2.0f*M_PI);
-            res.v = theta/M_PI;
+            res.u = (phi - phi_min)/(phi_max - phi_min);
+            res.v = (theta - theta_min)/(theta_max - theta_min);
+
+            res = (*objectToWorld)(res);
 
             return true;
         };
@@ -71,20 +85,17 @@ class Sphere : public Object {
 
 class Plane : public Object {
     public:
-        Vec3 pos;
-        Vec3 normal;
-        Vec2 size;
+        Plane(Transform* _objectToWorld, Transform* _worldToObject, Material* mat, Texture* tex) : Object(_objectToWorld, _worldToObject, mat, tex) {};
 
-        Plane(const Vec3& _pos, const Vec3& _normal, const Vec2& _size, Material* mat, Texture* tex) : Object(mat, tex), pos(_pos), normal(_normal), size(_size) {};
-
-        bool intersect(const Ray& ray, Hit& res) const {
-            float t = dot(pos - ray.origin, normal)/dot(ray.direction, normal);
+        bool intersect(const Ray& r, Hit& res) const {
+            Ray ray = (*worldToObject)(r);
+            Normal normal = Normal(0, 1, 0);
+            float t = dot(-ray.origin, normal)/dot(ray.direction, normal);
             if(t < ray.tmin || t > ray.tmax)
                 return false;
 
-            Vec3 hitPos = ray(t);
-            Vec3 posDif = hitPos - pos;
-            if(std::abs(posDif.x) > size.x || std::abs(posDif.y) > size.y)
+            Point3 hitPos = ray(t);
+            if(std::abs(hitPos.x) > 1 || std::abs(hitPos.z) > 1)
                 return false;
 
             res.t = t;
@@ -94,8 +105,10 @@ class Plane : public Object {
             res.inside = dot(ray.direction, res.hitNormal) > 0;
             if(res.inside)
                 res.hitNormal = -res.hitNormal;
-            res.u = 0.0f;
-            res.v = 0.0f;
+            res.u = (hitPos.x + 1.0)/2.0; 
+            res.v = (hitPos.z + 1.0)/2.0;
+
+            res = (*objectToWorld)(res);
 
             return true;
         };

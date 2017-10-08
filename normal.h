@@ -8,28 +8,10 @@ class Normal {
         float y;
         float z;
 
-        Normal() { x = y = z = 0.0f; };
-        Normal(float _x) {
-            float div = 1.0f/std::sqrt(3.0f*_x*_x);
-            x = y = z = _x*div;
-        };
-        Normal(float _x, float _y, float _z) {
-            float div = 1.0f/std::sqrt(_x*_x + _y*_y + _z*_z);
-            x = _x*div;
-            y = _y*div;
-            z = _z*div;
-        };
-        Normal(const Vec3& v) {
-            /*
-            float div = 1.0f/v.length();
-            x = v.x*div;
-            y = v.y*div;
-            y = v.z*div;
-            */
-            x = v.x;
-            y = v.y;
-            z = v.z;
-        };
+        Normal() { x = y = z = 0; };
+        Normal(float _x) : x(_x), y(_x), z(_x) {};
+        Normal(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {};
+        Normal(const Vec3& v) : x(v.x), y(v.y), z(v.z) {};
 
         Normal operator+(const Normal& n) const {
             return Normal(x + n.x, y + n.y, z + n.z);
@@ -58,13 +40,6 @@ class Normal {
 
         Normal operator-() const {
             return Normal(-x, -y, -z);
-        };
-
-        float length() const {
-            return 1.0f;
-        };
-        float length2() const {
-            return 1.0f;
         };
 };
 Normal operator+(float k, const Normal& n) {
@@ -112,9 +87,6 @@ inline float dot(const Vec3& v, const Normal& n) {
 }
 inline float dot(const Normal& n, const Vec3& v) {
     return n.x*v.x + n.y*v.y + n.z*v.z;
-}
-inline Normal cross(const Normal& n1, const Normal& n2) {
-    return Normal(n1.y*n2.z - n1.z*n2.y, n1.z*n2.x - n1.x*n2.z, n1.x*n2.y - n1.y*n2.x);
 }
 
 inline Vec3 reflect(const Vec3& v_in, const Normal& normal) {

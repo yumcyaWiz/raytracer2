@@ -39,7 +39,7 @@ class Checkerboard : public Texture {
         Checkerboard(Texture* _odd, Texture* _even, float _scale) : odd(std::shared_ptr<Texture>(_odd)), even(std::shared_ptr<Texture>(_even)), scale(_scale) {};
 
         RGB get(const Hit& res) const {
-            float f = std::sin(res.hitPos.x/scale)*std::sin(res.hitPos.y/scale)*std::sin(res.hitPos.z/scale);
+            float f = std::sin(res.u*scale*2.0*M_PI)*std::sin(res.v*scale*2.0*M_PI);
             if(f > 0)
                 return odd->get(res);
             else
