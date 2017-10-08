@@ -4,6 +4,7 @@
 #include <cmath>
 #include "util.h"
 #include "vec3.h"
+#include "normal.h"
 class RGB {
     public:
         float r;
@@ -22,6 +23,9 @@ class RGB {
             assert(!isNan());
         };
         RGB(const Vec3& v) : r(v.x), g(v.y), b(v.z) {
+            assert(!isNan());
+        };
+        RGB(const Normal& n) : r(n.x), g(n.y), b(n.z) {
             assert(!isNan());
         };
 

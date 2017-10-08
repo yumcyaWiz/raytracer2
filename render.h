@@ -66,6 +66,22 @@ class Render {
             }
             t.stop();
         };
+        void render_normal() {
+            for(int i = 0; i < img->height; i++) {
+                for(int j = 0; j < img->width; j++) {
+                    float u = (2.0*i - img->height)/img->height;
+                    float v = (2.0*j - img->width)/img->width;
+                    Ray ray = cam->getRay(u, v);
+                    Hit res;
+                    if(objs->intersect(ray, res)) {
+                        img->set(i, j, RGB(res.hitNormal + 1.0)/2.0);
+                    }
+                    else {
+                        img->set(i, j, RGB(0));
+                    }
+                }
+            }
+        }
 
         void output() {
             img->divide(float(samples));

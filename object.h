@@ -62,7 +62,7 @@ class Sphere : public Object {
             res.t = t;
             res.ray = ray;
             res.hitPos = hitPos;
-            res.hitNormal = Normal(normalize(res.hitPos - Point3()));
+            res.hitNormal = Normal((hitPos - Point3()) * 1.0/radius); 
             res.hitObj = const_cast<Sphere*>(this);
             res.inside = dot(ray.direction, res.hitNormal) > 0;
             if(res.inside)
@@ -89,22 +89,23 @@ class Plane : public Object {
 
         bool intersect(const Ray& r, Hit& res) const {
             Ray ray = (*worldToObject)(r);
-            Normal normal = Normal(0, 1, 0);
-            float t = dot(-ray.origin, normal)/dot(ray.direction, normal);
+            float t = -ray.origin.y/ray.direction.y;
             if(t < ray.tmin || t > ray.tmax)
                 return false;
 
+            t -= 1e-5;
             Point3 hitPos = ray(t);
             if(std::abs(hitPos.x) > 1 || std::abs(hitPos.z) > 1)
                 return false;
 
             res.t = t;
             res.hitPos = hitPos;
-            res.hitNormal = normal;
+            res.hitNormal = Normal(0, 1, 0);
             res.hitObj = const_cast<Plane*>(this);
-            res.inside = dot(ray.direction, res.hitNormal) > 0;
-            if(res.inside)
+            res.inside = false;
+            if(dot(ray.direction, res.hitNormal) > 0) {
                 res.hitNormal = -res.hitNormal;
+            }
             res.u = (hitPos.x + 1.0)/2.0; 
             res.v = (hitPos.z + 1.0)/2.0;
 

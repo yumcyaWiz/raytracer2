@@ -54,6 +54,7 @@ Transform translate(const Vec3& v) {
             0, 0, 0, 1);
     return Transform(m, m_inv);
 }
+
 Transform scale(float sx, float sy, float sz) {
     Mat4 m(sx, 0, 0, 0,
             0, sy, 0, 0,
@@ -93,6 +94,10 @@ Transform rotateZ(float theta) {
             0, 0, 0, 1);
     return Transform(m, transpose(m));
 }
+Transform rotate(float thetaX, float thetaY, float thetaZ) {
+    return rotateX(thetaX)*rotateY(thetaY)*rotateZ(thetaZ);
+}
+
 Transform inverse(const Transform& t) {
     return Transform(t.mat_inv, t.mat);
 }
