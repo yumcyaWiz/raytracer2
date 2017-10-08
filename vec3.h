@@ -2,17 +2,24 @@
 #define VEC3_H
 #include <iostream>
 #include <cmath>
+#include <cassert>
 class Vec3 {
     public:
         float x;
         float y;
         float z;
-        
+
+        bool isNan() const {
+            return std::isnan(x) || std::isnan(y) || std::isnan(z);
+        };
 
         Vec3() { x = y = z = 0; };
-        Vec3(float _x) : x(_x), y(_x), z(_x) {};
-        Vec3(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {};
-
+        Vec3(float _x) : x(_x), y(_x), z(_x) {
+            assert(!isNan());
+        };
+        Vec3(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {
+            assert(!isNan());
+        };
 
         Vec3 operator+(const Vec3& v) const {
             return Vec3(x + v.x, y + v.y, z + v.z);
@@ -39,11 +46,19 @@ class Vec3 {
             return Vec3(x / k, y / k, z / k);
         };
 
-
         Vec3 operator-() const {
             return Vec3(-x, -y, -z);
         };
 
+        Vec3 setX(float _x) const {
+            return Vec3(_x, y, z);
+        };
+        Vec3 setY(float _y) const {
+            return Vec3(x, _y, z);
+        };
+        Vec3 setZ(float _z) const {
+            return Vec3(x, y, _z);
+        };
 
         float length() const {
             return std::sqrt(x*x + y*y + z*z);

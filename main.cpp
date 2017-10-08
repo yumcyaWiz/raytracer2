@@ -1,5 +1,6 @@
 #include <iostream>
 #include <unistd.h>
+#include <cmath>
 #include "vec2.h"
 #include "vec3.h"
 #include "mat4.h"
@@ -37,14 +38,18 @@ int main(int argc, char** argv) {
 
     Image *img = new Image(width, height);
     
-    Vec3 camPos = Vec3(0, 1, -4);
+    Vec3 camPos = Vec3(0, 3, -5);
     Vec3 camForward = normalize(-camPos);
     Camera *cam = new Camera(camPos, camForward);
 
     Objects *objs = new Objects();
     objs->add(new Sphere(Vec3(0, -10001, 0), 10000.0f, new Diffuse(0.9f), new Checkerboard(new Mono(RGB(0.9f)), new Mono(RGB(0.1f)), 0.1f)));
-    objs->add(new Sphere(Vec3(2, 0, 0), 1.0f, new Diffuse(0.9f), new Mono(RGB(0.5f, 0.5f, 1.0f))));
-    objs->add(new Sphere(Vec3(-2, 0, 0), 1.0f, new Glass(1.4f), new Mono(RGB(1.0f))));
+    objs->add(new Sphere(Vec3(), 1.0f, new Mirror(0.9f), new Mono(RGB(1.0f))));
+    for(int i = 0; i < 12; i++) {
+        float x = std::cos((float)i/12.0f * 2.0f*M_PI);
+        float y = std::sin((float)i/12.0f * 2.0f*M_PI);
+        objs->add(new Sphere(3.0f*Vec3(x, 0, y), 0.5f, new Diffuse(0.9f), new Mono(RGB((x + 1.0f)/2.0f, (y + 1.0f)/2.0f, 1.0f))));
+    }
 
     Sky *sky = new simpleSky();
 
