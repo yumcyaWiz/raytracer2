@@ -42,7 +42,7 @@ class Mat4 {
         };
 
 
-        Mat4 operator+(const Mat4& mat) {
+        Mat4 operator+(const Mat4& mat) const {
             float ret[4][4];
             for(int i = 0; i < 4; i++) {
                 for(int j = 0; j < 4; j++) {
@@ -51,7 +51,7 @@ class Mat4 {
             }
             return Mat4(ret);
         };
-        Mat4 operator-(const Mat4& mat) {
+        Mat4 operator-(const Mat4& mat) const {
             float ret[4][4];
             for(int i = 0; i < 4; i++) {
                 for(int j = 0; j < 4; j++) {
@@ -60,7 +60,7 @@ class Mat4 {
             }
             return Mat4(ret);
         };
-        Mat4 operator*(const Mat4& mat) {
+        Mat4 operator*(const Mat4& mat) const {
             float ret[4][4];
             for(int i = 0; i < 4; i++) {
                 for(int j = 0; j < 4; j++) {
@@ -73,7 +73,7 @@ class Mat4 {
             }
             return Mat4(ret);
         };
-        Mat4 operator*(float k) {
+        Mat4 operator*(float k) const {
             float ret[4][4];
             for(int i = 0; i < 4; i++) {
                 for(int j = 0; j < 4; j++) {
@@ -82,7 +82,7 @@ class Mat4 {
             }
             return Mat4(ret);
         };
-        Vec4 operator*(const Vec4& v) {
+        Vec4 operator*(const Vec4& v) const {
             Vec4 ret;
             for(int i = 0; i < 4; i++) {
                 float sum = 0.0f;

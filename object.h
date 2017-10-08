@@ -7,6 +7,7 @@
 #include "hit.h"
 #include "material.h"
 #include "texture.h"
+#include "transform.h"
 class Object {
     public:
         std::shared_ptr<Material> mat;

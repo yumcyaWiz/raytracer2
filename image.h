@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <string>
 #include "rgb.h"
+#include "util.h"
 class Image {
     public:
         int width;
@@ -21,17 +22,19 @@ class Image {
         RGB get(int i, int j) const {
             if(i < 0 || i >= width || j < 0 || j >= height) {
                 std::cerr << "Invalid access" << std::endl;
-                exit(1);
+                std::exit(1);
             }
             return data[j + width*i];
         };
         void set(int i, int j, const RGB& col) {
             if(i < 0 || i >= width || j < 0 || j >= height) {
                 std::cerr << "Invalid access" << std::endl;
-                exit(1);
+                std::exit(1);
             }
             data[j + width*i] = col;
         };
+
+
         void ppm_output(std::string filename) {
             std::ofstream file(filename);
             file << "P3" << std::endl;
@@ -47,6 +50,10 @@ class Image {
 
             file.close();
         };
+        void ppm_output() {
+            this->ppm_output(ctime_string() + ".ppm");
+        };
+
         void divide(float n) {
             for(int i = 0; i < height; i++) {
                 for(int j = 0; j < width; j++) {

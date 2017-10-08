@@ -1,6 +1,8 @@
 #ifndef RENDER_H
 #define RENDER_H
 #include <memory>
+#include <cstdlib>
+#include <string>
 #include <omp.h>
 #include "objects.h"
 #include "camera.h"
@@ -63,9 +65,19 @@ class Render {
                     std::cout << progressbar(k, samples) << " " << percentage(k, samples) << "\r" << std::flush; 
             }
             t.stop();
+        };
+
+        void output() {
             img->divide(float(samples));
             img->gamma_correlation();
             img->ppm_output("output.ppm");
+        };
+        void png_output() {
+            img->divide(float(samples));
+            img->gamma_correlation();
+            img->ppm_output("output.ppm");
+            std::string command = "convert output.ppm " + ctime_string() + ".png";
+            std::system(command.c_str());
         };
 };
 #endif
