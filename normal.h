@@ -79,6 +79,10 @@ Vec3 operator/(const Vec3& v, const Normal& n) {
     return Vec3(v.x / n.x, v.y / n.y, v.z / n.z);
 }
 
+std::ostream& operator<<(std::ostream& stream, const Normal& n) {
+    stream << "(" << n.x << ", " << n.y << ", " << n.z << ")" << std::endl;
+}
+
 inline float dot(const Normal& n1, const Normal& n2) {
     return n1.x*n2.x + n1.y*n2.y + n1.z*n2.z;
 }

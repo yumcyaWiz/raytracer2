@@ -99,6 +99,7 @@ class Plane : public Object {
                 return false;
 
             res.t = t;
+            res.ray = ray;
             res.hitPos = hitPos;
             res.hitNormal = Normal(0, 1, 0);
             res.hitObj = const_cast<Plane*>(this);

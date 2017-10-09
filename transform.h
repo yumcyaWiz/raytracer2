@@ -14,7 +14,7 @@ class Transform {
         Transform(const Transform& t) : mat(t.mat), mat_inv(t.mat_inv) {};
 
         Transform operator*(const Transform& t) const {
-            return Transform(mat*t.mat, mat_inv*t.mat_inv);
+            return Transform(mat*t.mat, t.mat_inv*mat_inv);
         };
         Vec3 operator()(const Vec3& v) const {
             return Vec3(mat.m[0][0]*v.x + mat.m[0][1]*v.y + mat.m[0][2]*v.z,
