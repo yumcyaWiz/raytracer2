@@ -4,6 +4,9 @@
 #include "hit.h"
 #include <memory>
 #include <cmath>
+#include <string>
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 class Texture {
     public:
         virtual RGB get(const Hit& res) const = 0;
@@ -52,13 +55,21 @@ class ImageTexture : public Texture {
     public:
         int width;
         int height;
-        float* img;
+        unsigned char *img;
 
-        ImageTexture(char* filename) {
+        ImageTexture(std::string filename) {
+            int n;
+            img = stbi_load(filename.c_str(), &width, &height, &n, 3);
+        };
+        ~ImageTexture() {
+            stbi_image_free(img);
         };
 
         RGB get(const Hit& res) const {
-            return RGB(1.0);
+            int w = (int)(res.u*width);
+            int h = (int)((1.0 - res.v)*height);
+            int adr = 3*w + 3*width*h;
+            return RGB(img[adr]/255.0f, img[adr+1]/255.0f, img[adr+2]/255.0f);
         };
 };
 #endif

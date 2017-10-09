@@ -47,16 +47,27 @@ int main(int argc, char** argv) {
     Objects *objs = new Objects();
     Transform t = translate(Vec3(0, -1, 0))*scale(5.0, 1.0, 5.0);
     Transform t_inv = inverse(t);
-    objs->add(new Plane(&t, &t_inv, new Diffuse(0.9f), new Checkerboard(new Mono(RGB(0.9f)), new Mono(RGB(0.1f)), 5.0f)));
-    for(int i = 0; i < 20; i++) {
-        Vec3 pos = randVec(-2.0, 2.0, 0.0, 2.0, -2.0, 2.0);
-        Transform* t2 = new Transform(rotate(2*M_PI*rnd(), 2*M_PI*rnd(), 2*M_PI*rnd())*translate(pos));
-        Transform* t2_inv = new Transform(inverse(*t2));
-        objs->add(new Plane(t2, t2_inv, new Diffuse(0.9f), new Mono(RGB(rnd(), rnd(), rnd()))));
-    }
-    
+    objs->add(new Plane(&t, &t_inv, new Diffuse(1.0f), new ImageTexture("uv_test.png")));
     /*
-    Transform t2 = translate(Vec3()); 
+    for(int i = 0; i < 30; i++) {
+        Vec3 pos = randVec(-3.0, 3.0, 0.0, 2.0, -3.0, 3.0);
+        Transform* t2 = new Transform(rotate(2*M_PI*rnd(), 2*M_PI*rnd(), 2*M_PI*rnd())*translate(pos)*scale(0.7, 1.0, 0.7));
+        Transform* t2_inv = new Transform(inverse(*t2));
+        Material *mat;
+        Texture *tex;
+        if(rnd() < 0.8) {
+            mat = new Diffuse(0.9f);
+            tex = new Mono(RGB(rnd(), rnd(), rnd()));
+        }
+        else {
+            mat = new Mirror(1.0f);
+            tex = new Mono(RGB(1.0f));
+        }
+        objs->add(new Plane(t2, t2_inv, mat, tex));
+    }
+    */
+    
+    Transform t2 = scale(1.0, 1.0, 1.0); 
     Transform t2_inv = inverse(t2);
     objs->add(new Sphere(1.0f, &t2, &t2_inv, new Mirror(0.9f), new Mono(RGB(1.0f))));
     for(int i = 0; i < 12; i++) {
@@ -64,9 +75,8 @@ int main(int argc, char** argv) {
         float y = std::sin((float)i/12.0f * 2.0f*M_PI);
         Transform* t = new Transform(translate(3.0f*Vec3(x, 0, y)));
         Transform* t_inv = new Transform(inverse(*t));
-        objs->add(new Sphere(0.5f, t, t_inv, new Glass(1.4f), new Mono(RGB((x + 1.0f)/2.0f, (y + 1.0f)/2.0f, 1.0f))));
+        objs->add(new Sphere(0.5f, t, t_inv, new Glass(1.4f), new Mono(RGB(1.0f))));
     }
-    */
 
     Sky *sky = new simpleSky(1.0f);
 
