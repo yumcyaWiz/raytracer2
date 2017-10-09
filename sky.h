@@ -57,15 +57,15 @@ class IBL : public Sky {
         RGB get(const Ray& ray) const {
             float phi = std::atan2(ray.direction.z, ray.direction.x);
             if(phi < 0) phi += 2*M_PI;
-            double theta = std::acos(ray.direction.y);
+            double theta = std::atan(ray.direction.y/std::sqrt(ray.direction.x*ray.direction.x + ray.direction.z*ray.direction.z)) + M_PI/2;
 
             float u = phi/(2.0*M_PI);
-            float v = theta/M_PI;
+            float v = 1.0 - theta/M_PI;
 
             int w = (int)(u*width);
             int h = (int)(v*height);
             int adr = 3*w + 3*width*h;
-            return RGB(HDRI[adr], HDRI[adr+1], HDRI[adr+2]);
+            return 0.5f*RGB(HDRI[adr], HDRI[adr+1], HDRI[adr+2]);
         };
 };
 #endif
