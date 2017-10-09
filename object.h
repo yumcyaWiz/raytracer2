@@ -74,7 +74,7 @@ class Sphere : public Object {
             if(theta < theta_min || theta > theta_max || phi < phi_min || phi > phi_max)
                 return false;
             res.u = (phi - phi_min)/(phi_max - phi_min);
-            res.v = (theta - theta_min)/(theta_max - theta_min);
+            res.v = 1.0 - (theta - theta_min)/(theta_max - theta_min);
 
             res = (*objectToWorld)(res);
 

@@ -22,7 +22,7 @@ inline Vec3 random_in_unitSphere() {
     do {
         v = randVec();
     }
-    while(v.length() > 1.0);
+    while(v.length2() > 1.0);
     return v;
 }
 #endif

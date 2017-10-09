@@ -2,3 +2,6 @@ a.out
 stb_image.h
 *.ppm
 *.png
+*.jpg
+*.JPG
+*.hdr

@@ -1,2 +1,2 @@
 all: main.cpp
-	g++ -std=c++11 -fopenmp main.cpp
+	g++ -std=c++14 -fopenmp -O2 main.cpp

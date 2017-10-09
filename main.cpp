@@ -40,14 +40,14 @@ int main(int argc, char** argv) {
 
     Image *img = new Image(width, height);
     
-    Point3 camPos = Point3(0, 3, -5);
+    Point3 camPos = Point3(0, 1, 3);
     Vec3 camForward = normalize(Point3() - camPos);
     Camera *cam = new Camera(camPos, camForward);
 
     Objects *objs = new Objects();
-    Transform t = translate(Vec3(0, -1, 0))*scale(5.0, 1.0, 5.0);
+    Transform t = translate(Vec3(0, -2, 0))*scale(5.0, 1.0, 5.0);
     Transform t_inv = inverse(t);
-    objs->add(new Plane(&t, &t_inv, new Diffuse(1.0f), new ImageTexture("uv_test.png")));
+    objs->add(new Plane(&t, &t_inv, new Diffuse(0.8f), new Mono(1.0f)));
     /*
     for(int i = 0; i < 30; i++) {
         Vec3 pos = randVec(-3.0, 3.0, 0.0, 2.0, -3.0, 3.0);
@@ -67,6 +67,7 @@ int main(int argc, char** argv) {
     }
     */
     
+    /*
     Transform t2 = scale(1.0, 1.0, 1.0); 
     Transform t2_inv = inverse(t2);
     objs->add(new Sphere(1.0f, &t2, &t2_inv, new Mirror(0.9f), new Mono(RGB(1.0f))));
@@ -77,8 +78,12 @@ int main(int argc, char** argv) {
         Transform* t_inv = new Transform(inverse(*t));
         objs->add(new Sphere(0.5f, t, t_inv, new Glass(1.4f), new Mono(RGB(1.0f))));
     }
+    */
+    Transform t2 = rotateY(-M_PI/2.0f); 
+    Transform t2_inv = inverse(t2);
+    objs->add(new Sphere(1.0f, &t2, &t2_inv, new Mirror(0.9f), new Mono(RGB(1.0f))));
 
-    Sky *sky = new simpleSky(1.0f);
+    Sky *sky = new IBL("PaperMill_E_3k.hdr"); 
 
     Render render(cam, objs, sky, img, samples);
     render.render();

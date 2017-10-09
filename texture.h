@@ -5,8 +5,11 @@
 #include <memory>
 #include <cmath>
 #include <string>
+
+#ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#endif
 class Texture {
     public:
         virtual RGB get(const Hit& res) const = 0;

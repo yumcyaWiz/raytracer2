@@ -3,6 +3,7 @@
 #include <memory>
 #include <cstdlib>
 #include <string>
+#include <cmath>
 #include <omp.h>
 #include "objects.h"
 #include "camera.h"
@@ -39,8 +40,11 @@ class Render {
 
                 Ray nextRay;
                 float nextRay_pdf;
-                if(mat->scatter(res, nextRay, nextRay_pdf))
-                    return tex->get(res) * mat->brdf(res.hitPos, res.ray.direction, nextRay.direction)/nextRay_pdf * dot(nextRay.direction, res.hitNormal) * Li(nextRay, depth + 1);
+                if(mat->scatter(res, nextRay, nextRay_pdf)) {
+                    float k = mat->brdf(res.hitPos, res.ray.direction, nextRay.direction)/nextRay_pdf * dot(nextRay.direction, res.hitNormal);
+                    if(std::isnan(k)) k = 1.0f;
+                    return tex->get(res) * k * Li(nextRay, depth + 1);
+                }
                 else
                     return tex->get(res);
             }
