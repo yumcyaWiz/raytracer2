@@ -44,8 +44,8 @@ class Render {
 
             Hit res;
             if(objs->intersect(ray, res)) {
-                std::shared_ptr<Material> mat = res.hitObj->mat;
-                std::shared_ptr<Texture> tex = res.hitObj->tex;
+                const Material* mat = res.hitObj->mat;
+                const Texture* tex = res.hitObj->tex;
 
                 Ray nextRay;
                 float nextRay_pdf;
