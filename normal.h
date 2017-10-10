@@ -83,6 +83,10 @@ std::ostream& operator<<(std::ostream& stream, const Normal& n) {
     stream << "(" << n.x << ", " << n.y << ", " << n.z << ")" << std::endl;
 }
 
+inline Normal normalize(const Normal& n) {
+    return Normal(n.x, n.y, n.z)/(std::sqrt(n.x*n.x + n.y*n.y + n.z*n.z));
+}
+
 inline float dot(const Normal& n1, const Normal& n2) {
     return n1.x*n2.x + n1.y*n2.y + n1.z*n2.z;
 }

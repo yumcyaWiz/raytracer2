@@ -69,7 +69,7 @@ class Glass : public Material {
                 else {
                     Vec3 dir;
                     if(refract(res.ray.direction, res.hitNormal, 1.0f, IOR, dir)) {
-                        nextRay = Ray(res.hitPos, dir);
+                        nextRay = Ray(res.hitPos, normalize(dir));
                         pdf = dot(nextRay.direction, res.hitNormal);
                         return true;
                     }
@@ -90,7 +90,7 @@ class Glass : public Material {
                 else {
                     Vec3 dir;
                     if(refract(res.ray.direction, res.hitNormal, IOR, 1.0f, dir)) {
-                        nextRay = Ray(res.hitPos, dir);
+                        nextRay = Ray(res.hitPos, normalize(dir));
                         pdf = dot(nextRay.direction, res.hitNormal);
                         return true;
                     }

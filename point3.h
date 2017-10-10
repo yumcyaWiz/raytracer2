@@ -28,6 +28,9 @@ class Point3 {
         Point3 operator+(const Vec3& v) const {
             return Point3(x + v.x, y + v.y, z + v.z);
         };
+        Point3 operator+(const Normal& n) const {
+            return Point3(x + n.x, y + n.y, z + n.z);
+        };
         Point3 operator-(const Vec3& v) const {
             return Point3(x - v.x, y - v.y, z - v.z);
         };

@@ -57,16 +57,18 @@ class Sphere : public Object {
             if(t < ray.tmin || t > ray.tmax) {
                 return false;
             }
-            Point3 hitPos = ray(t);
 
-            res.t = t;
-            res.ray = ray;
-            res.hitPos = hitPos;
-            res.hitNormal = Normal((hitPos - Point3()) * 1.0/radius); 
-            res.hitObj = const_cast<Sphere*>(this);
+            Point3 hitPos = ray(t);
+            res.hitNormal = Normal(normalize(hitPos - Point3()));
             res.inside = dot(ray.direction, res.hitNormal) > 0;
             if(res.inside)
                 res.hitNormal = -res.hitNormal;
+
+            hitPos = hitPos + 1e-5*res.hitNormal;
+            res.hitPos = hitPos;
+            res.t = t;
+            res.ray = ray;
+            res.hitObj = const_cast<Sphere*>(this);
 
             float phi = std::atan2(hitPos.z, hitPos.x);
             if(phi < 0) phi += 2*M_PI;
