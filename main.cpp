@@ -18,9 +18,10 @@ int main(int argc, char** argv) {
     int height;
     int samples;
     bool png_output = false;
+    bool normal_output = false;
 
     int opt;
-    while((opt = getopt(argc, argv, "w:h:s:o")) != -1) {
+    while((opt = getopt(argc, argv, "w:h:s:on")) != -1) {
         switch(opt) {
             case 'w':
                 width = std::stoi(optarg);
@@ -33,6 +34,9 @@ int main(int argc, char** argv) {
                 break;
             case 'o':
                 png_output = true;
+                break;
+            case 'n':
+                normal_output = true;
                 break;
         }
     }
@@ -86,6 +90,11 @@ int main(int argc, char** argv) {
     Sky *sky = new IBL("PaperMill_E_3k.hdr"); 
 
     Render render(cam, objs, sky, img, samples);
+    if(normal_output) {
+        render.render_normal();
+        render.output();
+        return 0;
+    }
     render.render();
     if(png_output) {
         render.png_output();

@@ -18,6 +18,8 @@ class Render {
         Sky* sky;
         Image* img;
         int samples;
+        const int maxDepth = 100;
+        float russian_roulette_prob = 1.0;
 
 
         Render(Camera* _cam, Objects* _objs, Sky* _sky, Image* _img, int _samples) {
@@ -30,8 +32,15 @@ class Render {
 
 
         RGB Li(const Ray& ray, int depth) {
-            if(depth > 10)
+            if(depth < 10) {
+                russian_roulette_prob = 1.0;
+            }
+            else {
+                russian_roulette_prob /= 1.2;
+            }
+            if(rnd() > russian_roulette_prob || depth >= maxDepth) {
                 return RGB(1.0f);
+            }
 
             Hit res;
             if(objs->intersect(ray, res)) {
@@ -41,7 +50,7 @@ class Render {
                 Ray nextRay;
                 float nextRay_pdf;
                 if(mat->scatter(res, nextRay, nextRay_pdf)) {
-                    float k = mat->brdf(res.hitPos, res.ray.direction, nextRay.direction)/nextRay_pdf * dot(nextRay.direction, res.hitNormal);
+                    float k = mat->brdf(res.hitPos, res.ray.direction, nextRay.direction) * dot(nextRay.direction, res.hitNormal)/(nextRay_pdf * russian_roulette_prob);
                     if(std::isnan(k)) k = 1.0f;
                     return tex->get(res) * k * Li(nextRay, depth + 1);
                 }
