@@ -34,7 +34,7 @@ class Sphere : public Object {
         const float theta_max;
 
 
-        Sphere(float _radius, Transform* _objectToWorld, Transform* _worldToObject, Material* _mat, Texture* _tex, float _ymin, float _ymax, float _phi_max) : Object(_objectToWorld, _worldToObject, _mat, _tex), radius(_radius), ymin(clamp(std::min(_ymin, _ymax), -_radius, _radius)), ymax(clamp(std::max(_ymin, _ymax), _radius, radius)), phi_max(_phi_max), theta_min(std::acos(clamp(ymin/radius, -1, 1))), theta_max(std::acos(clamp(ymax/radius, -1, 1))) {};
+        Sphere(float _radius, Transform* _objectToWorld, Transform* _worldToObject, Material* _mat, Texture* _tex, float _ymin, float _ymax, float _phi_max) : Object(_objectToWorld, _worldToObject, _mat, _tex), radius(_radius), ymin(clamp(std::min(_ymin, _ymax), -_radius, _radius)), ymax(clamp(std::max(_ymin, _ymax), -_radius, _radius)), phi_max(_phi_max), theta_min(std::acos(clamp(ymin/radius, -1, 1))), theta_max(std::acos(clamp(ymax/radius, -1, 1))) {};
 
 
         bool intersect(const Ray& r, Hit& res) const {
