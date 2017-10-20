@@ -76,7 +76,6 @@ class Sphere : public Object {
                     return false;
             }
 
-
             res.hitNormal = Normal(normalize(hitPos - Point3()));
             res.inside = dot(ray.direction, res.hitNormal) > 0;
             if(res.inside)

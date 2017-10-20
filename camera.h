@@ -10,13 +10,15 @@ class Camera {
         Vec3 camRight;
         Vec3 camUp;
 
+        Camera(const Point3& _camPos, const Vec3& _camForward) : camPos(_camPos), camForward(_camForward), camRight(-cross(camForward, Vec3(0, 1, 0))), camUp(cross(camRight, camForward)) {};
 
-        Camera(const Point3& _camPos, const Vec3& _camForward) {
-            camPos = _camPos;
-            camForward = _camForward;
-            camRight = -cross(camForward, Vec3(0, 1, 0));
-            camUp = cross(camRight, camForward);
-        };
+        virtual Ray getRay(float u, float v) const = 0;
+};
+
+
+class SimpleCamera : public Camera {
+    public:
+        SimpleCamera(const Point3& _camPos, const Vec3& _camForward) : Camera(_camPos, _camForward) {};
 
 
         Ray getRay(float u, float v) const {
