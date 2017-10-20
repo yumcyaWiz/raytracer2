@@ -54,7 +54,7 @@ int main(int argc, char** argv) {
     objs->add(new Plane(&t, &t_inv, new Diffuse(1.0f), new ImageTexture("uv_test.png")));
     Transform t2 = translate(Vec3(0, 0, 0));
     Transform t2_inv = inverse(t2);
-    objs->add(new Sphere(1.0f, &t2, &t2_inv, new Glass(3.0f), new Mono(RGB(1.0f)), -2.0f, 2.0f, 3*M_PI));
+    objs->add(new Sphere(1.0f, &t2, &t2_inv, new Glass(1.4f), new Mono(RGB(1.0f)), -2.0f, 2.0f, 3*M_PI));
 
     /*
     Transform t2 = translate(Vec3());

@@ -70,8 +70,9 @@ class Render {
                     for(int j = 0; j < img->width; j++) {
                         float u = (2.0f*(i + rnd()) - img->height)/img->height;
                         float v = (2.0f*(j + rnd()) - img->width)/img->height;
-                        Ray ray = cam->getRay(u, v);
-                        img->set(i, j, img->get(i, j) + Li(ray, 0));
+                        float w;
+                        Ray ray = cam->getRay(u, v, w);
+                        img->set(i, j, img->get(i, j) + w*Li(ray, 0));
                     }
                 }
                 if(omp_get_thread_num() == 0)
@@ -84,7 +85,8 @@ class Render {
                 for(int j = 0; j < img->width; j++) {
                     float u = (2.0*i - img->height)/img->height;
                     float v = (2.0*j - img->width)/img->width;
-                    Ray ray = cam->getRay(u, v);
+                    float w;
+                    Ray ray = cam->getRay(u, v, w);
                     Hit res;
                     if(objs->intersect(ray, res)) {
                         img->set(i, j, RGB(res.hitNormal + 1.0)/2.0);
