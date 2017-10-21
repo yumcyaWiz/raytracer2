@@ -25,4 +25,13 @@ inline Vec3 random_in_unitSphere() {
     while(v.length2() > 1.0);
     return v;
 }
+
+inline Vec3 random_in_unitDisk(const Vec3& right, const Vec3& up) {
+    Vec3 v;
+    do {
+        v = (2.0f*rnd() - 1.0f)*right + (2.0f*rnd() - 1.0f)*up;
+    }
+    while(v.length2() > 1.0);
+    return v;
+}
 #endif

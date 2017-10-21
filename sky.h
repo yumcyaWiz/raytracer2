@@ -65,7 +65,7 @@ class IBL : public Sky {
             int w = (int)(u*width);
             int h = (int)(v*height);
             int adr = 3*w + 3*width*h;
-            return 0.5f*RGB(HDRI[adr], HDRI[adr+1], HDRI[adr+2]);
+            return RGB(HDRI[adr], HDRI[adr+1], HDRI[adr+2]);
         };
 };
 #endif

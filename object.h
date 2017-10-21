@@ -40,15 +40,15 @@ class Sphere : public Object {
         bool intersect(const Ray& r, Hit& res) const {
             Ray ray = (*worldToObject)(r);
             float a = ray.direction.length2();
-            float b = 2.0*dot(ray.origin, ray.direction);
+            float b = 2.0f*dot(ray.origin, ray.direction);
             float c = (ray.origin - Point3()).length2() - radius*radius;
-            float D = b*b - 4*a*c;
+            float D = b*b - 4.0f*a*c;
 
             if(D < 0)
                 return false;
             float t0 = (-b - std::sqrt(D))/(2.0*a);
             float t1 = (-b + std::sqrt(D))/(2.0*a);
-            if(t0 < ray.tmin || t1 > ray.tmax)
+            if(t0 > ray.tmax || t1 < ray.tmin)
                 return false;
             float t = t0;
             if(t < ray.tmin) {
@@ -87,8 +87,10 @@ class Sphere : public Object {
             res.hitObj = const_cast<Sphere*>(this);
 
             res.u = phi/phi_max;
+            res.u = 1.0f - res.u;
             float theta = std::acos(clamp(hitPos.y/radius, -1, 1));
             res.v = (theta - theta_min)/(theta_max - theta_min);
+            res.v = 1.0f - res.v;
 
             res = (*objectToWorld)(res);
 
@@ -114,15 +116,15 @@ class Plane : public Object {
 
             res.t = t;
             res.ray = ray;
-            res.hitPos = hitPos;
             res.hitNormal = Normal(0, 1, 0);
-            res.hitObj = const_cast<Plane*>(this);
             res.inside = false;
             if(dot(ray.direction, res.hitNormal) > 0) {
                 res.hitNormal = -res.hitNormal;
             }
+            res.hitPos = ray(t);
             res.u = (hitPos.x + 1.0)/2.0; 
             res.v = (hitPos.z + 1.0)/2.0;
+            res.hitObj = const_cast<Plane*>(this);
 
             res = (*objectToWorld)(res);
 

@@ -3,6 +3,7 @@
 #include "vec3.h"
 #include "point3.h"
 #include "ray.h"
+#include "sampler.h"
 class Camera {
     public:
         Point3 camPos;
@@ -32,21 +33,31 @@ class SimpleCamera : public Camera {
 };
 
 
-/*
 class ThinLensCamera : public Camera {
     public:
         float lens_radius;
         float lens_distance;
-        float focal_length;
+        float focus_distance;
 
-        ThinLensCamera(const Point3& camPos, const Vec3& camForward) : Camera(camPos, camForward), lens_radius(0.1f), lens_distance(0.1f), focal_length(1.0f) {};
+        ThinLensCamera(const Point3& camPos, const Vec3& camForward, float lens_radius, float lens_distance, float focus_distance) : Camera(camPos, camForward), lens_radius(lens_radius), lens_distance(lens_distance), focus_distance(focus_distance) {};
 
         Ray getRay(float u, float v, float &w) const {
+            v = -v;
             Point3 sensorPos = camPos + u*camRight + v*camUp;
+            Point3 lensCenterPos = camPos + lens_distance*camForward;
             Point3 lensPos = camPos + lens_distance*camForward + lens_radius*random_in_unitDisk(camRight, camUp);
+
+            float object_distance = focus_distance - lens_distance;
+            Vec3 sensor_to_lensCenter = normalize(lensCenterPos - sensorPos);
+            float sensor_object_distance = (lens_distance + object_distance)/dot(camForward, sensor_to_lensCenter);
+            Point3 objectPos = sensorPos + sensor_object_distance*sensor_to_lensCenter; 
+
             Vec3 sensor_to_lensPos = normalize(lensPos - sensorPos);
-            return Ray(Point3f(), Vector3f());
+            float sensor_lens_distance = (lensPos - sensorPos).length();
+            w = std::pow(dot(camForward, sensor_to_lensPos), 2.0f)/std::pow(sensor_lens_distance, 2.0f);
+
+            Vec3 rayDir = normalize(objectPos - lensPos);
+            return Ray(lensPos, rayDir);
         };
 };
-*/
 #endif

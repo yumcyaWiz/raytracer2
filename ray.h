@@ -12,7 +12,7 @@ class Ray {
 
         Ray() {};
         Ray(const Point3& o, const Vec3& d) : origin(o), direction(d) {
-            tmin = 0.01f;
+            tmin = 0.001f;
             tmax = 10000.0f;
         };
 

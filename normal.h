@@ -80,7 +80,7 @@ Vec3 operator/(const Vec3& v, const Normal& n) {
 }
 
 std::ostream& operator<<(std::ostream& stream, const Normal& n) {
-    stream << "(" << n.x << ", " << n.y << ", " << n.z << ")" << std::endl;
+    stream << "(" << n.x << ", " << n.y << ", " << n.z << ")";
 }
 
 inline Normal normalize(const Normal& n) {

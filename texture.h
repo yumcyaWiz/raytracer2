@@ -70,7 +70,7 @@ class ImageTexture : public Texture {
 
         RGB get(const Hit& res) const {
             int w = (int)(res.u*width);
-            int h = (int)((1.0 - res.v)*height);
+            int h = (int)(res.v*height);
             int adr = 3*w + 3*width*h;
             return RGB(img[adr]/255.0f, img[adr+1]/255.0f, img[adr+2]/255.0f);
         };
