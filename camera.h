@@ -34,6 +34,21 @@ class SimpleCamera : public Camera {
 };
 
 
+class OrthogonalCamera : public Camera {
+    public:
+        float sizeU;
+        float sizeV;
+
+        OrthogonalCamera(const Point3& camPos, const Vec3& camForward, float sensitivity, float sizeU, float sizeV) : Camera(camPos, camForward, sensitivity), sizeU(sizeU), sizeV(sizeV) {};
+
+        Ray getRay(float u, float v, float &w) const {
+            Point3 sensorPos = camPos + sizeU*u*camRight + sizeV*v*camUp;
+            w = sensitivity;
+            return Ray(sensorPos, camForward);
+        };
+};
+
+
 class ThinLensCamera : public Camera {
     public:
         float lens_radius;
