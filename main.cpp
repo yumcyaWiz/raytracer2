@@ -44,17 +44,19 @@ int main(int argc, char** argv) {
 
     Image *img = new Image(width, height);
     
-    Point3 camPos = Point3(0, 1, 3);
+    Point3 camPos = Point3(5.5, 1, 0);
     Vec3 camForward = normalize(Point3() - camPos);
-    Camera *cam = new ThinLensCamera(camPos, camForward, 0.05f, 1.0f, (Point3() - camPos).length() - 0.8f);
+    Camera *cam = new ThinLensCamera(camPos, camForward, 1.0f, 0.1f, 1.0f, Point3(0, 0, 0));
 
     Objects *objs = new Objects();
     Transform t = translate(Vec3(0, -1, 0))*scale(5.0, 1.0, 5.0);
     Transform t_inv = inverse(t);
-    objs->add(new Plane(&t, &t_inv, new Diffuse(0.9f), new Mono(RGB(1.0f))));
-    Transform t2 = translate(Vec3(0, 0, 0));
+    objs->add(new Plane(&t, &t_inv, new Diffuse(1.0f), new Mono(RGB(1.0f))));
+    /*
+    Transform t2 = translate(Vec3(0, 0, 0))*rotateY(M_PI/2.0);
     Transform t2_inv = inverse(t2);
-    objs->add(new Sphere(1.0f, &t2, &t2_inv, new Glass(1.4f), new ImageTexture("earth2.jpg"), -2.0f, 2.0f, 3*M_PI));
+    objs->add(new Sphere(1.0f, &t2, &t2_inv, new Glass(1.4f), new ImageTexture("uv_test2.png"), -1.0f, 1.0f, 2*M_PI));
+    */
 
     /*
     Transform t2 = translate(Vec3());
@@ -81,7 +83,6 @@ int main(int argc, char** argv) {
     }
     */
     
-    /*
     Transform t2 = scale(1.0, 1.0, 1.0); 
     Transform t2_inv = inverse(t2);
     objs->add(new Sphere(1.0f, &t2, &t2_inv, new Mirror(0.9f), new Mono(RGB(1.0f)), -1.0f, 1.0f, 2*M_PI));
@@ -90,11 +91,10 @@ int main(int argc, char** argv) {
         float y = std::sin((float)i/12.0f * 2.0f*M_PI);
         Transform* t = new Transform(translate(Vec3(2.5f*x, -0.5, 2.5f*y)));
         Transform* t_inv = new Transform(inverse(*t));
-        objs->add(new Sphere(0.5f, t, t_inv, new Glass(1.4f), new Mono(RGB(1.0f)), -1.0f, 1.0f, 2*M_PI));
+        objs->add(new Sphere(0.5f, t, t_inv, new Glass(1.4f), new ImageTexture("earth2.jpg"), -1.0f, 1.0f, 2*M_PI));
     }
-    */
 
-    Sky *sky = new IBL("PaperMill_E_3k.hdr");
+    Sky *sky = new IBL("NarrowPath_3k.hdr");
 
     Render render(cam, objs, sky, img, samples);
     if(normal_output) {

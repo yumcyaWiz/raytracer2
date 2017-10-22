@@ -42,40 +42,40 @@ class Normal {
             return Normal(-x, -y, -z);
         };
 };
-Normal operator+(float k, const Normal& n) {
+inline Normal operator+(float k, const Normal& n) {
     return Normal(k + n.x, k + n.y, k + n.z);
 }
-Normal operator-(float k, const Normal& n) {
+inline Normal operator-(float k, const Normal& n) {
     return Normal(k - n.x, k - n.y, k - n.z);
 }
-Normal operator*(float k, const Normal& n) {
+inline Normal operator*(float k, const Normal& n) {
     return Normal(k * n.x, k * n.y, k * n.z);
 }
-Normal operator/(float k, const Normal& n) {
+inline Normal operator/(float k, const Normal& n) {
     return Normal(k / n.x, k / n.y, k / n.z);
 }
-Vec3 operator+(const Vec3& v, const Normal& n) {
+inline Vec3 operator+(const Vec3& v, const Normal& n) {
     return Vec3(v.x + n.x, v.y + n.y, v.z + n.z);
 }
-Vec3 operator+(const Normal& n, const Vec3& v) {
+inline Vec3 operator+(const Normal& n, const Vec3& v) {
     return Vec3(n.x + v.x, n.y + v.y, n.z + v.z);
 }
-Vec3 operator-(const Vec3& v, const Normal& n) {
+inline Vec3 operator-(const Vec3& v, const Normal& n) {
     return Vec3(v.x - n.x, v.y - n.y, v.z - n.z);
 }
-Vec3 operator-(const Normal& n, const Vec3& v) {
+inline Vec3 operator-(const Normal& n, const Vec3& v) {
     return Vec3(n.x - v.x, n.y - v.y, n.z - v.z);
 }
-Vec3 operator*(const Vec3& v, const Normal& n) {
+inline Vec3 operator*(const Vec3& v, const Normal& n) {
     return Vec3(v.x * n.x, v.y * n.y, v.z * n.z);
 }
-Vec3 operator*(const Normal& n, const Vec3& v) {
+inline Vec3 operator*(const Normal& n, const Vec3& v) {
     return Vec3(n.x * v.x, n.y * v.y, n.z * v.z);
 }
-Vec3 operator/(const Normal& n, const Vec3& v) {
+inline Vec3 operator/(const Normal& n, const Vec3& v) {
     return Vec3(n.x / v.x, n.y / v.y, n.z / v.z);
 }
-Vec3 operator/(const Vec3& v, const Normal& n) {
+inline Vec3 operator/(const Vec3& v, const Normal& n) {
     return Vec3(v.x / n.x, v.y / n.y, v.z / n.z);
 }
 

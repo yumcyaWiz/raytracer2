@@ -43,41 +43,41 @@ class Point3 {
             return Point3(-x, -y, -z);
         };
 };
-Point3 operator*(float k, const Point3& p) {
+inline Point3 operator*(float k, const Point3& p) {
     return Point3(k * p.x, k * p.y, k * p.z);
 }
-Point3 operator*(const Point3& p, float k) {
+inline Point3 operator*(const Point3& p, float k) {
     return Point3(p.x * k, p.y * k, p.z * k);
 }
 
-float dot(const Point3& p, const Vec3& v) {
+inline float dot(const Point3& p, const Vec3& v) {
     return p.x*v.x + p.y*v.y + p.z*v.z;
 }
-float dot(const Vec3& v, const Point3& p) {
+inline float dot(const Vec3& v, const Point3& p) {
     return v.x*p.x + v.y*p.y + v.z*p.z;
 }
-float dot(const Point3& p, const Normal& n) {
+inline float dot(const Point3& p, const Normal& n) {
     return p.x*n.x + p.y*n.y + p.z*n.z;
 }
-float dot(const Normal& n, const Point3& p) {
+inline float dot(const Normal& n, const Point3& p) {
     return n.x*p.x + n.y*p.y + n.z*p.z;
 }
 
-float distance(const Point3& p1, const Point3& p2) {
+inline float distance(const Point3& p1, const Point3& p2) {
     return (p1 - p2).length();
 }
-float distance2(const Point3& p1, const Point3& p2) {
+inline float distance2(const Point3& p1, const Point3& p2) {
     return (p1 - p2).length2();
 }
 
-Point3 lerp(float t, const Point3& p1, const Point3& p2) {
+inline Point3 lerp(float t, const Point3& p1, const Point3& p2) {
     return (1 - t)*p1 + t*p2;
 };
 
-Point3 min(const Point3& p1, const Point3& p2) {
+inline Point3 min(const Point3& p1, const Point3& p2) {
     return Point3(std::min(p1.x, p2.x), std::min(p1.y, p2.y), std::min(p1.z, p2.z));
 }
-Point3 max(const Point3& p1, const Point3& p2) {
+inline Point3 max(const Point3& p1, const Point3& p2) {
     return Point3(std::max(p1.x, p2.x), std::max(p1.y, p2.y), std::min(p1.z, p2.z));
 }
 #endif

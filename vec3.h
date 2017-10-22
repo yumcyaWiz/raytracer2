@@ -67,16 +67,16 @@ class Vec3 {
             return x*x + y*y + z*z;
         }
 };
-Vec3 operator+(float k, const Vec3& v) {
+inline Vec3 operator+(float k, const Vec3& v) {
     return Vec3(k + v.x, k + v.y, k + v.z);
 }
-Vec3 operator-(float k, const Vec3& v) {
+inline Vec3 operator-(float k, const Vec3& v) {
     return Vec3(k - v.x, k - v.y, k - v.z);
 }
-Vec3 operator*(float k, const Vec3& v) {
+inline Vec3 operator*(float k, const Vec3& v) {
     return Vec3(k * v.x, k * v.y, k * v.z);
 }
-Vec3 operator/(float k, const Vec3& v) {
+inline Vec3 operator/(float k, const Vec3& v) {
     return Vec3(k / v.x, k / v.y, k / v.z);
 }
 std::ostream& operator<<(std::ostream& stream, const Vec3& v) {
