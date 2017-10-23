@@ -8,5 +8,6 @@ simple physically based raytracer version2
 
 
 ## Output
+![](output/output20.png)
+![](output/output41.png)
 ![](output/output42.png)
-
