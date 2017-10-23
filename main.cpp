@@ -46,8 +46,7 @@ int main(int argc, char** argv) {
     
     Point3 camPos = Point3(5.5, 1, 0);
     Vec3 camForward = normalize(Point3() - camPos);
-    //Camera *cam = new ThinLensCamera(camPos, camForward, 1.0f, 0.1f, 1.0f, Point3(0, 0, 0));
-    Camera *cam = new OrthogonalCamera(camPos, camForward, 1.0f, 2.0f, 2.0f);
+    Camera *cam = new ThinLensCamera(camPos, camForward, 1.5f, 1.5f, Point3(0, 0, 0), 5.6f);
 
     Objects *objs = new Objects();
     Transform t = translate(Vec3(0, -1, 0))*scale(5.0, 1.0, 5.0);

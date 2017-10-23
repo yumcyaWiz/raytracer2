@@ -36,7 +36,7 @@ class Render {
                 russian_roulette_prob = 1.0;
             }
             else {
-                russian_roulette_prob /= 1.2;
+                russian_roulette_prob /= 1.1;
             }
             if(rnd() > russian_roulette_prob || depth >= maxDepth) {
                 return RGB(1.0f);

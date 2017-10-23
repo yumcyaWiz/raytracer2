@@ -51,27 +51,33 @@ class OrthogonalCamera : public Camera {
 
 class ThinLensCamera : public Camera {
     public:
-        float lens_radius;
         float lens_distance;
         Point3 focus_point;
+        float Fnumber;
+        float lens_radius;
+        float object_distance;
+        float focal_length;
+        Point3 lensCenterPos;
 
-        ThinLensCamera(const Point3& camPos, const Vec3& camForward, float sensitivity, float lens_radius, float lens_distance, const Point3& focus_point) : Camera(camPos, camForward, sensitivity), lens_radius(lens_radius), lens_distance(lens_distance), focus_point(focus_point) {};
+        ThinLensCamera(const Point3& camPos, const Vec3& camForward, float sensitivity, float lens_distance, const Point3& focus_point, float Fnumber) : Camera(camPos, camForward, sensitivity), lens_distance(lens_distance), focus_point(focus_point), Fnumber(Fnumber) {
+            object_distance = distance(focus_point, camPos) - lens_distance;
+            focal_length = 1.0f/(1.0f/lens_distance + 1.0f/object_distance);
+            lens_radius = 0.5f*focal_length/Fnumber;
+            lensCenterPos = camPos + lens_distance*camForward;
+        };
 
         Ray getRay(float u, float v, float &w) const {
             v = -v;
             Point3 sensorPos = camPos + u*camRight + v*camUp;
-            Point3 lensCenterPos = camPos + lens_distance*camForward;
             Point3 lensPos = camPos + lens_distance*camForward + lens_radius*random_in_unitDisk(camRight, camUp);
 
-            float focus_distance = distance(focus_point, camPos);
-            float object_distance = focus_distance - lens_distance;
             Vec3 sensor_to_lensCenter = normalize(lensCenterPos - sensorPos);
             float sensor_object_distance = (lens_distance + object_distance)/dot(camForward, sensor_to_lensCenter);
             Point3 objectPos = sensorPos + sensor_object_distance*sensor_to_lensCenter; 
 
             Vec3 sensor_to_lensPos = normalize(lensPos - sensorPos);
-            float sensor_lens_distance = (lensPos - sensorPos).length();
-            w = sensitivity * std::pow(dot(camForward, sensor_to_lensPos), 2.0f)/std::pow(sensor_lens_distance, 2.0f);
+            float sensor_lens_distance2 = (lensPos - sensorPos).length2();
+            w = sensitivity * std::pow(dot(camForward, sensor_to_lensPos), 2.0f)/sensor_lens_distance2;
 
             Vec3 rayDir = normalize(objectPos - lensPos);
             return Ray(lensPos, rayDir);
