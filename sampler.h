@@ -2,11 +2,21 @@
 #define SAMPLER_H
 #include <random>
 #include "vec3.h"
+
+/*
+#include "sobol/sobol.cpp"
+*/
+
 std::random_device rnd_dev;
 std::mt19937 mt(rnd_dev());
 std::uniform_real_distribution<float> rand_dist(0, 1);
 inline float rnd() {
     return rand_dist(mt);
+}
+
+std::uniform_int_distribution<> randint_dist(0, 10000);
+inline int rndint() {
+    return randint_dist(mt);
 }
 
 
@@ -25,6 +35,9 @@ inline Vec3 random_in_unitSphere() {
     while(v.length2() > 1.0);
     return v;
 }
+inline Vec3 random_in_unitHemisphere(const Vec3& up) {
+    return Vec3();
+};
 
 inline Vec3 random_in_unitDisk(const Vec3& right, const Vec3& up) {
     Vec3 v;
@@ -34,4 +47,25 @@ inline Vec3 random_in_unitDisk(const Vec3& right, const Vec3& up) {
     while(v.length2() > 1.0);
     return v;
 }
+
+inline Vec3 random_in_unitAstroid(const Vec3& right, const Vec3& up) {
+    Vec3 v;
+    float x;
+    float y;
+    do {
+        x = 2.0f*rnd() - 1.0f;
+        y = 2.0f*rnd() - 1.0f;
+        v = x*right + y*up;
+    }
+    while(std::pow(x, 2.0f/3.0f) + std::pow(y, 2.0f/3.0f) > 1.0f);
+    return v;
+}
+
+
+/*
+int sobol2_seed[2] = {rndint(), rndint()};
+inline void sobol2(float quasi[]) {
+    i4_sobol(2, sobol2_seed, quasi);
+}
+*/
 #endif

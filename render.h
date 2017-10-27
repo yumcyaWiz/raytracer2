@@ -11,6 +11,8 @@
 #include "sky.h"
 #include "sampler.h"
 #include "timer.h"
+
+
 class Render {
     public:
         Camera* cam;
@@ -72,8 +74,11 @@ class Render {
                         float u = (2.0f*(i + rnd()) - img->height)/img->height;
                         float v = (2.0f*(j + rnd()) - img->width)/img->height;
                         float w;
-                        Ray ray = cam->getRay(u, v, w);
-                        img->set(i, j, img->get(i, j) + w*Li(ray, 0));
+                        Ray ray;
+                        if(cam->getRay(u, v, ray, w))
+                            img->set(i, j, img->get(i, j) + w*Li(ray, 0));
+                        else
+                            img->set(i, j, RGB(0.0f));
                     }
                 }
                 if(omp_get_thread_num() == 0)
@@ -87,13 +92,18 @@ class Render {
                     float u = (2.0*i - img->height)/img->height;
                     float v = (2.0*j - img->width)/img->width;
                     float w;
-                    Ray ray = cam->getRay(u, v, w);
-                    Hit res;
-                    if(objs->intersect(ray, res)) {
-                        img->set(i, j, RGB(res.hitNormal + 1.0)/2.0);
+                    Ray ray;
+                    if(cam->getRay(u, v, ray, w)) {
+                        Hit res;
+                        if(objs->intersect(ray, res)) {
+                            img->set(i, j, RGB(res.hitNormal + 1.0)/2.0);
+                        }
+                        else {
+                            img->set(i, j, RGB(0));
+                        }
                     }
                     else {
-                        img->set(i, j, RGB(0));
+                        img->set(i, j, RGB(0.0f));
                     }
                 }
             }

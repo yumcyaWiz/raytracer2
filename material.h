@@ -119,4 +119,16 @@ class Emissive : public Material {
             return 1.0f;
         }
 };
+
+
+class Phong : public Material {
+    public:
+        Phong() {};
+
+        bool scatter(const Hit& res, Ray& nextRay, float& pdf) const {
+        };
+        float brdf(const Point3& hitPos, const Vec3& ray_in, const Vec3& ray_out) const {
+            return 1.0f;
+        };
+};
 #endif

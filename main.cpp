@@ -44,14 +44,15 @@ int main(int argc, char** argv) {
 
     Image *img = new Image(width, height);
     
-    Point3 camPos = Point3(5.5, 1, 0);
+    Point3 camPos = Point3(0, 1, 5.5);
     Vec3 camForward = normalize(Point3() - camPos);
-    Camera *cam = new ThinLensCamera(camPos, camForward, 1.5f, 1.5f, Point3(0, 0, 0), 5.6f);
+    //Camera *cam = new ThinLensCamera(camPos, camForward, 1.0f, 1.0f, Point3(0, 0, 2.5), 5.6f);
+    Camera *cam = new EquidistantFisheyeCamera(camPos, camForward, 1.0f, 0.7f);
 
     Objects *objs = new Objects();
     Transform t = translate(Vec3(0, -1, 0))*scale(5.0, 1.0, 5.0);
     Transform t_inv = inverse(t);
-    objs->add(new Plane(&t, &t_inv, new Diffuse(1.0f), new Mono(RGB(1.0f))));
+    objs->add(new Plane(&t, &t_inv, new Diffuse(0.9f), new Mono(RGB(1.0f))));
     /*
     Transform t2 = translate(Vec3(0, 0, 0))*rotateY(M_PI/2.0);
     Transform t2_inv = inverse(t2);
@@ -85,7 +86,7 @@ int main(int argc, char** argv) {
     
     Transform t2 = scale(1.0, 1.0, 1.0); 
     Transform t2_inv = inverse(t2);
-    objs->add(new Sphere(1.0f, &t2, &t2_inv, new Mirror(0.9f), new Mono(RGB(1.0f)), -1.0f, 1.0f, 2*M_PI));
+    objs->add(new Sphere(1.0f, &t2, &t2_inv, new Mirror(1.0f), new Mono(RGB(1.0f)), -1.0f, 1.0f, 2.0*M_PI));
     for(int i = 0; i < 12; i++) {
         float x = std::cos((float)i/12.0f * 2.0f*M_PI);
         float y = std::sin((float)i/12.0f * 2.0f*M_PI);
@@ -94,7 +95,7 @@ int main(int argc, char** argv) {
         objs->add(new Sphere(0.5f, t, t_inv, new Glass(1.4f), new ImageTexture("earth2.jpg"), -1.0f, 1.0f, 2*M_PI));
     }
 
-    Sky *sky = new IBL("NarrowPath_3k.hdr");
+    Sky *sky = new IBL("PaperMill_E_3k.hdr");
 
     Render render(cam, objs, sky, img, samples);
     if(normal_output) {
