@@ -115,8 +115,7 @@ class OrthogonalFisheyeCamera : public FisheyeCamera {
             return true;
             */
             float r = std::sqrt(u*u + v*v);
-            if(r/focal_length < -1 || r/focal_length > 1)
-                return false;
+            if(std::abs(r/focal_length) > 1) return false;
             float theta = std::asin(r/focal_length);
             float phi = std::atan2(v, u);
             if(phi < 0) phi += 2*M_PI;
@@ -161,6 +160,29 @@ class StereoFisheyeCamera : public FisheyeCamera {
         bool getRay(float u, float v, Ray& ray, float &w) const {
             float r = std::sqrt(u*u + v*v);
             float theta = 2*std::atan(r/(2*focal_length));
+            if(std::abs(theta) > M_PI/2) return false;
+            float phi = std::atan2(v, u);
+            if(phi < 0) phi += 2*M_PI;
+
+            float x = std::cos(phi)*std::sin(theta);
+            float y = std::sin(phi)*std::sin(theta);
+            float z = std::cos(theta);
+            w = sensitivity * std::pow(dot(normalize(Point3(x, y, z) - Point3(u, v, 0)), Vec3(0, 0, 1)), 4.0f);
+            Vec3 rayDir = normalize(x*camRight + y*camUp + z*camForward);
+            ray = Ray(camPos + focal_length*rayDir, rayDir);
+            return true;
+        };
+};
+
+
+class EquiSolidAngleFisheyeCamera : public FisheyeCamera {
+    public:
+        EquiSolidAngleFisheyeCamera(const Point3& camPos, const Vec3& camForward, float sensitivity, float focal_length) : FisheyeCamera(camPos, camForward, sensitivity, focal_length) {};
+
+        bool getRay(float u, float v, Ray& ray, float &w) const {
+            float r = std::sqrt(u*u + v*v);
+            if(std::abs(r/(2*focal_length)) > 1) return false;
+            float theta = 2*std::asin(r/(2*focal_length));
             if(std::abs(theta) > M_PI/2) return false;
             float phi = std::atan2(v, u);
             if(phi < 0) phi += 2*M_PI;
