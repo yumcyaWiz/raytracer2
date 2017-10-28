@@ -47,7 +47,7 @@ int main(int argc, char** argv) {
     Point3 camPos = Point3(0, 1, 5.5);
     Vec3 camForward = normalize(Point3() - camPos);
     //Camera *cam = new ThinLensCamera(camPos, camForward, 1.0f, 1.0f, Point3(0, 0, 2.5), 5.6f);
-    Camera *cam = new EquidistantFisheyeCamera(camPos, camForward, 1.0f, 0.7f);
+    Camera *cam = new StereoFisheyeCamera(camPos, camForward, 1.0f, 0.5f);
 
     Objects *objs = new Objects();
     Transform t = translate(Vec3(0, -1, 0))*scale(5.0, 1.0, 5.0);
