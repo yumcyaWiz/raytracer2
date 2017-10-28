@@ -18,17 +18,18 @@ class Camera {
 };
 
 
-class SimpleCamera : public Camera {
+class PinholeCamera : public Camera {
     public:
-        float pinhole_distance;
-        SimpleCamera(const Point3& _camPos, const Vec3& _camForward, float sensitivity) : Camera(_camPos, _camForward, sensitivity), pinhole_distance(1.0f) {};
+        float focal_length;
+
+        PinholeCamera(const Point3& _camPos, const Vec3& _camForward, float sensitivity, float focal_length) : Camera(_camPos, _camForward, sensitivity), focal_length(focal_length) {};
 
         bool getRay(float u, float v, Ray& ray, float &w) const {
             v = -v;
             Point3 sensorPos = camPos + u*camRight + v*camUp;
-            Point3 pinholePos = camPos + pinhole_distance*camForward;
+            Point3 pinholePos = camPos + focal_length*camForward;
             Vec3 rayDir = normalize(pinholePos - sensorPos);
-            w = sensitivity * std::pow(dot(camForward, rayDir), 2.0f);
+            w = sensitivity * std::pow(dot(camForward, rayDir), 4.0f);
             ray = Ray(camPos, rayDir);
             return true;
         };

@@ -2,9 +2,21 @@
 #define RGB_H
 #include <cassert>
 #include <cmath>
-#include "util.h"
 #include "vec3.h"
 #include "normal.h"
+
+
+float clamp(float x, float xmin, float xmax) {
+    if(x < xmin)
+        return xmin;
+    else if(x > xmax)
+        return xmax;
+    else
+        return x;
+}
+
+
+
 class RGB {
     public:
         float r;

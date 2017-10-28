@@ -21,6 +21,16 @@ class Vec3 {
             assert(!isNan());
         };
 
+        float operator[](int i) const {
+            if(i == 0) return x;
+            else if(i == 1) return y;
+            else if(i == 2) return z;
+            else {
+                std::cerr << "invalid index" << std::endl;
+                std::exit(1);
+            };
+        };
+
         Vec3 operator+(const Vec3& v) const {
             return Vec3(x + v.x, y + v.y, z + v.z);
         };

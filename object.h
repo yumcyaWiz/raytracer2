@@ -135,10 +135,52 @@ class Plane : public Object {
 
 class Cylinder : public Object {
     public:
-        float ymin;
-        float ymax;
+        const float ymin;
+        const float ymax;
 };
 class Box : public Object {
+    public:
+        const Point3 pMin;
+        const Point3 pMax;
+
+        Box(Transform* objectToWorld, Transform* worldToObject, Material* mat, Texture* tex, const Point3& pMin, const Point3& pMax) : Object(objectToWorld, worldToObject, mat, tex), pMin(pMin), pMax(pMax) {};
+
+        bool intersect(const Ray& r, Hit& res) const {
+            Ray ray = (*worldToObject)(r);
+            float t0 = ray.tmin;
+            float t1 = ray.tmax + 1.0f;
+            Normal n;
+            for(int i = 0; i < 3; i++) {
+                float invDir = 1.0f/ray.direction[i];
+                if(std::isnan(invDir))
+                    continue;
+                float tNear = (pMin[i] - ray.origin[i])*invDir;
+                float tFar = (pMax[i] - ray.origin[i])*invDir;
+                if(tNear > tFar) std::swap(tNear, tFar);
+                if(tNear > t0) {
+                    t0 = tNear;
+                    if(i == 0) n = Normal(1, 0, 0);
+                    else if(i == 1) n = Normal(0, 1, 0);
+                    else n = Normal(0, 0, 1);
+                }
+                t1 = tFar < t1 ? tFar : t1;
+                if(t0 > t1) return false;
+            }
+            if(t0 <= ray.tmin || t0 >= ray.tmax) return false;
+
+            Point3 hitPos = ray(t0);
+            res.t = t0;
+            res.hitPos = hitPos;
+            res.hitNormal = n;
+            res.inside = dot(ray.direction, res.hitNormal) > 0;
+            if(res.inside) {
+                res.hitNormal = -res.hitNormal;
+            }
+            res.ray = ray;
+            res.hitObj = const_cast<Box*>(this);
+            res = (*objectToWorld)(res);
+            return true;
+        };
 };
 class Cone : public Object {
 };

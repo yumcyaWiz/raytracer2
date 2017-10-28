@@ -13,6 +13,9 @@ std::uniform_real_distribution<float> rand_dist(0, 1);
 inline float rnd() {
     return rand_dist(mt);
 }
+inline float rnd2() {
+    return 2.0*rand_dist(mt) - 1.0;
+}
 
 std::uniform_int_distribution<> randint_dist(0, 10000);
 inline int rndint() {

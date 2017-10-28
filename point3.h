@@ -22,6 +22,16 @@ class Point3 {
             assert(!isNan());
         };
 
+        float operator[](int i) const {
+            if(i == 0) return x;
+            else if(i == 1) return y;
+            else if(i == 2) return z;
+            else {
+                std::cerr << "invalid index" << std::endl;
+                std::exit(1);
+            }
+        };
+
         Point3 operator+(const Point3& p) const {
             return Point3(x + p.x, y + p.y, z + p.z);
         };
