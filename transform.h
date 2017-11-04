@@ -38,7 +38,7 @@ class Transform {
             return Ray((*this)(r.origin), (*this)(r.direction));
         };
         Hit operator()(const Hit& res) const {
-            return Hit(res.t, (*this)(res.ray), (*this)(res.hitPos), normalize((*this)(res.hitNormal)), res.u, res.v, res.hitObj, res.inside); 
+            return Hit(res.t, (*this)(res.ray), (*this)(res.hitPos), res.u, res.v, (*this)(res.dpdu), (*this)(res.dpdv), normalize((*this)(res.hitNormal)), res.hitObj, res.inside); 
         };
 };
 

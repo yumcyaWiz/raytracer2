@@ -10,7 +10,7 @@
 class Material {
     public:
         virtual bool scatter(const Hit& hit, Ray& nextRay, float& pdf) const = 0;
-        virtual float brdf(const Point3& hitPos, const Vec3& ray_in, const Vec3& ray_out) const = 0;
+        virtual float brdf(const Hit& hit, const Vec3& ray_in, const Vec3& ray_out) const = 0;
 };
 
 
@@ -25,7 +25,7 @@ class Diffuse : public Material {
             pdf = dot(nextRay.direction, res.hitNormal)/M_PI;
             return true;
         };
-        float brdf(const Point3& hitPos, const Vec3& ray_in, const Vec3& ray_out) const {
+        float brdf(const Hit& hit, const Vec3& ray_in, const Vec3& ray_out) const {
             return reflectivity/M_PI;
         };
 };
@@ -42,7 +42,7 @@ class Mirror : public Material {
             pdf = dot(nextRay.direction, res.hitNormal);
             return true;
         };
-        float brdf(const Point3& hitPos, const Vec3& ray_in, const Vec3& ray_out) const {
+        float brdf(const Hit& hit, const Vec3& ray_in, const Vec3& ray_out) const {
             return reflectivity;
         };
 };
@@ -102,7 +102,7 @@ class Glass : public Material {
                 }
             }
         };
-        float brdf(const Point3& hitPos, const Vec3& ray_in, const Vec3& ray_out) const {
+        float brdf(const Hit& hit, const Vec3& ray_in, const Vec3& ray_out) const {
             return 1.0f;
         };
 };
@@ -115,20 +115,47 @@ class Emissive : public Material {
         bool scatter(const Hit& res, Ray& nextRay, float& pdf) const {
             return false;
         };
-        float brdf(const Point3& hitPos, const Vec3& ray_in, const Vec3& ray_out) const {
+        float brdf(const Hit& hit, const Vec3& ray_in, const Vec3& ray_out) const {
             return 1.0f;
         }
 };
 
 
-class Phong : public Material {
+class Glossy : public Material {
     public:
-        Phong() {};
+        float specular;
+
+        Glossy(float specular) : specular(specular) {};
 
         bool scatter(const Hit& res, Ray& nextRay, float& pdf) const {
+            Vec3 rayDir = normalize(reflect(res.ray.direction, res.hitNormal) + specular*random_in_unitSphere());
+            nextRay = Ray(res.hitPos, rayDir);
+            pdf = 1.0f;
+            return true;
         };
-        float brdf(const Point3& hitPos, const Vec3& ray_in, const Vec3& ray_out) const {
+
+        float brdf(const Hit& res, const Vec3& ray_in, const Vec3& ray_out) const {
             return 1.0f;
+        };
+};
+
+
+class Phong : public Material {
+    public:
+        float diffuse;
+        float specular;
+
+        Phong(float diffuse, float specular) : diffuse(diffuse), specular(specular) {};
+
+        bool scatter(const Hit& res, Ray& nextRay, float& pdf) const {
+            Vec3 rayDir = normalize(random_in_unitHemisphere(res.dpdu, res.dpdv, res.hitNormal + Vec3()));
+            nextRay = Ray(res.hitPos, rayDir);
+            pdf = 1.0f/(2.0f*M_PI);
+            return true;
+        };
+        float brdf(const Hit& res, const Vec3& ray_in, const Vec3& ray_out) const {
+            Vec3 refl = reflect(ray_in, res.hitNormal);
+            return diffuse*std::max(dot(ray_in, ray_out), 0.0f) + specular*std::pow(std::max(dot(ray_out, refl), 0.0f), 8.0f);
         };
 };
 #endif

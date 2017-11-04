@@ -14,8 +14,9 @@ inline float rnd() {
     return rand_dist(mt);
 }
 inline float rnd2() {
-    return 2.0*rand_dist(mt) - 1.0;
+    return 2.0f*rnd() - 1.0f;
 }
+
 
 std::uniform_int_distribution<> randint_dist(0, 10000);
 inline int rndint() {
@@ -24,28 +25,38 @@ inline int rndint() {
 
 
 inline Vec3 randVec() {
-    return Vec3(2.0*rnd() - 1.0, 2.0*rnd() - 1.0, 2.0*rnd() - 1.0);
+    return Vec3(rnd2(), rnd2(), rnd2());
 }
 inline Vec3 randVec(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax) {
     return Vec3(xmin + rnd()*(xmax - xmin), ymin + rnd()*(ymax - ymin), zmin + rnd()*(zmax - zmin));
 }
+
 
 inline Vec3 random_in_unitSphere() {
     Vec3 v;
     do {
         v = randVec();
     }
-    while(v.length2() > 1.0);
+    while(v.length2() > 1.0f);
     return v;
 }
-inline Vec3 random_in_unitHemisphere(const Vec3& up) {
-    return Vec3();
+inline Vec3 random_in_unitHemisphere(const Vec3& right, const Vec3& forward, const Vec3& up) {
+    float x, y, z;
+    Vec3 v;
+    do {
+        x = rnd2();
+        y = rnd();
+        z = rnd2();
+        v = x*right + y*up + z*forward;
+    }
+    while(v.length2() > 1.0f);
+    return v;
 };
 
 inline Vec3 random_in_unitDisk(const Vec3& right, const Vec3& up) {
     Vec3 v;
     do {
-        v = (2.0f*rnd() - 1.0f)*right + (2.0f*rnd() - 1.0f)*up;
+        v = rnd2()*right + rnd2()*up;
     }
     while(v.length2() > 1.0);
     return v;
@@ -56,8 +67,8 @@ inline Vec3 random_in_unitAstroid(const Vec3& right, const Vec3& up) {
     float x;
     float y;
     do {
-        x = 2.0f*rnd() - 1.0f;
-        y = 2.0f*rnd() - 1.0f;
+        x = rnd2();
+        y = rnd2();
         v = x*right + y*up;
     }
     while(std::pow(x, 2.0f/3.0f) + std::pow(y, 2.0f/3.0f) > 1.0f);

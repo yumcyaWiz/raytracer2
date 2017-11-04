@@ -11,13 +11,15 @@ class Hit {
         float t;
         Ray ray;
         Point3 hitPos;
-        Normal hitNormal;
         float u;
         float v;
+        Vec3 dpdu;
+        Vec3 dpdv;
+        Normal hitNormal;
         Object* hitObj;
         bool inside;
 
         Hit() {};
-        Hit(float _t, const Ray& _ray, const Point3& _hitPos, const Normal& _hitNormal, float _u, float _v, Object* _hitObj, bool _inside) : t(_t), ray(_ray), hitPos(_hitPos), hitNormal(_hitNormal), u(_u), v(_v), hitObj(_hitObj), inside(_inside) {};
+        Hit(float _t, const Ray& _ray, const Point3& _hitPos, float _u, float _v, const Vec3& dpdu, const Vec3& dpdv, const Normal& hitNormal, Object* _hitObj, bool _inside) : t(_t), ray(_ray), hitPos(_hitPos), u(_u), v(_v), dpdu(dpdu), dpdv(dpdv), hitNormal(hitNormal), hitObj(_hitObj), inside(_inside) {};
 };
 #endif

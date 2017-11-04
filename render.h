@@ -41,7 +41,7 @@ class Render {
                 russian_roulette_prob /= 1.1;
             }
             if(rnd() > russian_roulette_prob || depth >= maxDepth) {
-                return RGB(1.0f);
+                return RGB(0.0f);
             }
 
             Hit res;
@@ -52,9 +52,9 @@ class Render {
                 Ray nextRay;
                 float nextRay_pdf;
                 if(mat->scatter(res, nextRay, nextRay_pdf)) {
-                    float k = mat->brdf(res.hitPos, res.ray.direction, nextRay.direction) * dot(nextRay.direction, res.hitNormal)/(nextRay_pdf * russian_roulette_prob);
+                    float k = mat->brdf(res, res.ray.direction, nextRay.direction) * dot(nextRay.direction, res.hitNormal)/(nextRay_pdf * russian_roulette_prob);
                     if(std::isnan(k))
-                        k = 1.0f;
+                        k = 0.0f;
                     return tex->get(res) * k * Li(nextRay, depth + 1);
                 }
                 else

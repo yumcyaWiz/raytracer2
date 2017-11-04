@@ -76,10 +76,6 @@ class Sphere : public Object {
                     return false;
             }
 
-            res.hitNormal = Normal(normalize(hitPos - Point3()));
-            res.inside = dot(ray.direction, res.hitNormal) > 0;
-            if(res.inside)
-                res.hitNormal = -res.hitNormal;
 
             res.hitPos = hitPos;
             res.t = t;
@@ -91,6 +87,15 @@ class Sphere : public Object {
             float theta = std::acos(clamp(hitPos.y/radius, -1, 1));
             res.v = (theta - theta_min)/(theta_max - theta_min);
             res.v = 1.0f - res.v;
+
+            Vec3 dpdu = Vec3(-phi_max*hitPos.z, 0, phi_max*hitPos.x);
+            Vec3 dpdv = (theta_max - theta_min) * Vec3(hitPos.y*std::cos(phi), -radius*std::sin(theta), hitPos.y*std::sin(phi));
+            res.dpdu = dpdu;
+            res.dpdv = dpdv;
+            res.hitNormal = -cross(dpdu, dpdv);
+            res.inside = dot(ray.direction, res.hitNormal) > 0;
+            if(res.inside)
+                res.hitNormal = -res.hitNormal;
 
             res = (*objectToWorld)(res);
 
@@ -183,5 +188,7 @@ class Box : public Object {
         };
 };
 class Cone : public Object {
+    public:
+
 };
 #endif
