@@ -47,17 +47,18 @@ int main(int argc, char** argv) {
     
     Point3 camPos = Point3(0, 1, 5);
     Vec3 camForward = normalize(Point3() - camPos);
-    Camera *cam = new PinholeCamera(camPos, camForward, 1.0f, 1.5f);
-    //Camera *cam = new ThinLensCamera(camPos, camForward, 1.0f, 1.0f, Point3(0, 0, -2.5f), 5.6f);
+    //Camera *cam = new PinholeCamera(camPos, camForward, 1.0f, 1.5f);
+    Camera *cam = new ThinLensCamera(camPos, camForward, 1.0f, 1.0f, Point3(0, 0, 0), 2.8f);
     //Camera *cam = new EquidistantFisheyeCamera(camPos, camForward, 1.0f, 1.0f);
 
     Objects *objs = new Objects();
     Transform t = translate(Vec3(0, -1, 0))*scale(3.0, 1.0, 3.0);
     Transform t_inv = inverse(t);
-    objs->add(new Plane(&t, &t_inv, new Diffuse(0.9f), new Mono(RGB(1.0f))));
+    objs->add(new Plane(&t, &t_inv, new Diffuse(0.9f), new ImageTexture("uv_test.png")));
     Transform t2 = translate(Vec3(0, 0, 0));
     Transform t2_inv = inverse(t2);
-    objs->add(new Sphere(1.0f, &t2, &t2_inv, new Glass(1.4f), new Mono(RGB(0.0f, 0.5f, 1.0f)), -1.0f, 1.0f, 2*M_PI));
+    objs->add(new Sphere(1.0f, &t2, &t2_inv, new Emissive(1.5f), new ImageTexture("uv_test.png"), -1.0f, 1.0f, 2*M_PI));
+
     /*
     Transform t2 = translate(Vec3(-3, 0, 0))*rotateZ(M_PI/2)*scale(3.0, 1.0, 3.0);
     Transform t2_inv = inverse(t2);
@@ -76,7 +77,7 @@ int main(int argc, char** argv) {
     objs->add(new Plane(&t6, &t6_inv, new Diffuse(1.0f), new Mono(RGB(1.0f))));
     Transform t7 = translate(Vec3(0, 0, 0));
     Transform t7_inv = inverse(t7);
-    objs->add(new Sphere(1.0f, &t7, &t7_inv, new Diffuse(1.0f), new Mono(RGB(0.0f, 0.0f, 1.0f)), -1.0f, 1.0f, 2*M_PI));
+    objs->add(new Sphere(1.0f, &t7, &t7_inv, new Glass(1.4f), new Mono(RGB(0.0f, 0.0f, 1.0f)), -1.0f, 1.0f, 2*M_PI));
     */
 
     /*
@@ -138,8 +139,8 @@ int main(int argc, char** argv) {
     }
     */
 
-    Sky *sky = new IBL("PaperMill_E_3k.hdr");
-    //Sky *sky = new testSky(RGB(1.0f));
+    //Sky *sky = new IBL("PaperMill_E_3k.hdr");
+    Sky *sky = new simpleSky(0.5f);
 
     Render render(cam, objs, sky, img, samples);
     if(normal_output) {

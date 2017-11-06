@@ -1,12 +1,11 @@
 #ifndef SAMPLER_H
 #define SAMPLER_H
 #include <random>
+#include <cstdint>
 #include "vec3.h"
 
-/*
-#include "sobol/sobol.cpp"
-*/
 
+//MT19937
 std::random_device rnd_dev;
 std::mt19937 mt(rnd_dev());
 std::uniform_real_distribution<float> rand_dist(0, 1);
@@ -21,6 +20,21 @@ inline float rnd2() {
 std::uniform_int_distribution<> randint_dist(0, 10000);
 inline int rndint() {
     return randint_dist(mt);
+}
+
+
+//Mean Square
+uint64_t msws_x = rnd_dev(), msws_w = 0, msws_s = 0xb5ad4eceda1ce2a9;
+inline static uint32_t msws() {
+    msws_x *= msws_x;
+    msws_x += (msws_w += msws_s);
+    return msws_x = (msws_x >> 32) | (msws_x << 32);
+}
+inline static float msws_rnd() {
+    return (double)(msws())/UINT32_MAX;
+}
+inline static float msws_rnd2() {
+    return 2.0f*msws_rnd() - 1.0f;
 }
 
 

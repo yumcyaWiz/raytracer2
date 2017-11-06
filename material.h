@@ -110,13 +110,15 @@ class Glass : public Material {
 
 class Emissive : public Material {
     public:
-        Emissive() {};
+        float intensity;
+
+        Emissive(float intensity) : intensity(intensity) {};
 
         bool scatter(const Hit& res, Ray& nextRay, float& pdf) const {
             return false;
         };
         float brdf(const Hit& hit, const Vec3& ray_in, const Vec3& ray_out) const {
-            return 1.0f;
+            return intensity;
         }
 };
 

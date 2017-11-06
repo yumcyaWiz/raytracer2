@@ -58,7 +58,7 @@ class Render {
                     return tex->get(res) * k * Li(nextRay, depth + 1);
                 }
                 else
-                    return tex->get(res);
+                    return mat->brdf(res, res.ray.direction, Vec3()) * tex->get(res);
             }
             else {
                 return sky->get(ray);
