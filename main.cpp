@@ -45,20 +45,23 @@ int main(int argc, char** argv) {
 
     Image *img = new Image(width, height);
     
-    Point3 camPos = Point3(0, 2.0, 4);
+    Point3 camPos = Point3(0, 1, 3);
     Vec3 camForward = normalize(Point3() - camPos);
-    Camera *cam = new PinholeCamera(camPos, camForward, 1.0f, 1.5f);
+    Camera *cam = new PinholeCamera(camPos, camForward, 1.0f, 1.0f);
     //Camera *cam = new ThinLensCamera(camPos, camForward, 5.0f, 1.5f, Point3(0, 0, 0), 8.0f);
     //Camera *cam = new EquidistantFisheyeCamera(camPos, camForward, 1.0f, 1.0f);
 
     Objects *objs = new Objects();
     Transform t = translate(Vec3(0, -1, 0))*scale(3.0, 1.0, 3.0);
     Transform t_inv = inverse(t);
-    objs->add(new Plane(&t, &t_inv, new Diffuse(0.9f), new Mono(RGB(1.0f))));
-    Transform t2 = translate(Vec3(0, 0, 0))*rotateX(M_PI/2)*rotateZ(M_PI/4);
+    objs->add(new Plane(&t, &t_inv, new Diffuse(0.9f), new Checkerboard(new Mono(RGB(1.0f)), new Mono(RGB(0.1f)), 5.0f)));
+    Transform t2 = translate(Vec3(0, 0, 0));
     Transform t2_inv = inverse(t2);
     //objs->add(new Box(&t2, &t2_inv, new Glass(1.4f), new Mono(RGB(1.0f)), Point3(-0.5, -0.5, -0.5), Point3(0.5, 0.5, 0.5)));
-    objs->add(new Cylinder(&t2, &t2_inv, new Diffuse(0.9f), new ImageTexture("uv_test.png"), 1.0f, -1.0f, 1.0f, 2*M_PI));
+    objs->add(new Disk(&t2, &t2_inv, new Diffuse(0.9f), new Mono(RGB(1.0f)), 0.0f, 1.4f, 1.2f, 2*M_PI));
+    Transform t3 = translate(Vec3(0, 0, 0));
+    Transform t3_inv = inverse(t3);
+    objs->add(new Sphere(&t3, &t3_inv, new Diffuse(1.0f), new ImageTexture("earth.jpg"), 1.0f, -1.0f, 1.0f, 2*M_PI));
 
     /*
     Transform t2 = translate(Vec3(-3, 0, 0))*rotateZ(M_PI/2)*scale(3.0, 1.0, 3.0);

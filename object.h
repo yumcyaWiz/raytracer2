@@ -34,7 +34,7 @@ class Sphere : public Object {
         const float theta_max;
 
 
-        Sphere(float _radius, Transform* _objectToWorld, Transform* _worldToObject, Material* _mat, Texture* _tex, float _ymin, float _ymax, float _phi_max) : Object(_objectToWorld, _worldToObject, _mat, _tex), radius(_radius), ymin(clamp(std::min(_ymin, _ymax), -_radius, _radius)), ymax(clamp(std::max(_ymin, _ymax), -_radius, _radius)), phi_max(_phi_max), theta_min(std::acos(clamp(ymin/radius, -1, 1))), theta_max(std::acos(clamp(ymax/radius, -1, 1))) {};
+        Sphere(Transform* _objectToWorld, Transform* _worldToObject, Material* _mat, Texture* _tex, float _radius, float _ymin, float _ymax, float _phi_max) : Object(_objectToWorld, _worldToObject, _mat, _tex), radius(_radius), ymin(clamp(std::min(_ymin, _ymax), -_radius, _radius)), ymax(clamp(std::max(_ymin, _ymax), -_radius, _radius)), phi_max(_phi_max), theta_min(std::acos(clamp(ymin/radius, -1, 1))), theta_max(std::acos(clamp(ymax/radius, -1, 1))) {};
 
 
         bool intersect(const Ray& r, Hit& res) const {
@@ -249,7 +249,29 @@ class Disk : public Object {
 
         bool intersect(const Ray& r, Hit& res) const {
             Ray ray = (*worldToObject)(r);
-            return false;
+            float t = (height - ray.origin.y)/ray.direction.y;
+            if(t < ray.tmin || t > ray.tmax) return false;
+            Point3 hitPos = ray(t);
+            float dist2 = hitPos.x*hitPos.x + hitPos.z*hitPos.z;
+            if(dist2 < innerRadius*innerRadius || dist2 > radius*radius) return false;
+            float phi = std::atan2(hitPos.z, hitPos.x);
+            if(phi < 0) phi += 2*M_PI;
+            if(phi > phiMax) return false;
+
+            res.hitPos = hitPos;
+            res.t = t;
+            res.ray = ray;
+            res.hitObj = const_cast<Disk*>(this);
+
+            res.u = phi/phiMax;
+            float rHit = std::sqrt(dist2);
+            res.v = (rHit - innerRadius)/(radius - innerRadius);
+            res.v = 1.0f - res.v;
+            res.hitNormal = Normal(0, 1, 0);
+            res.inside = false;
+            res = (*objectToWorld)(res);
+
+            return true;
         };
 };
 class Cone : public Object {
