@@ -140,8 +140,59 @@ class Plane : public Object {
 
 class Cylinder : public Object {
     public:
-        const float ymin;
-        const float ymax;
+        const float radius;
+        const float yMin;
+        const float yMax;
+        const float phiMax;
+
+        Cylinder(Transform* objectToWorld, Transform* worldToObject, Material* mat, Texture* tex, const float radius, const float yMin, const float yMax, const float phiMax) : Object(objectToWorld, worldToObject, mat, tex), radius(radius), yMin(yMin), yMax(yMax), phiMax(phiMax) {};
+
+        bool intersect(const Ray& r, Hit& res) const {
+            Ray ray = (*worldToObject)(r);
+            float a = ray.direction.x*ray.direction.x + ray.direction.z*ray.direction.z;
+            float b = 2*(ray.direction.x*ray.origin.x + ray.direction.z*ray.origin.z);
+            float c = ray.origin.x*ray.origin.x + ray.origin.z*ray.origin.z - radius*radius;
+            float D = b*b - 4*a*c;
+            if(D < 0) return false;
+            float t0 = (-b - std::sqrt(D))/(2*a);
+            float t1 = (-b + std::sqrt(D))/(2*a);
+            Point3 hitPos;
+            float phi;
+            if(t0 > ray.tmax || t1 < ray.tmin) return false;
+            float t = t0;
+            hitPos = ray(t);
+            phi = std::atan2(hitPos.z, hitPos.x);
+            if(phi < 0) phi += 2*M_PI;
+            if(t < ray.tmin || hitPos.y < yMin || hitPos.y > yMax || phi > phiMax) {
+                t = t1;
+                hitPos = ray(t);
+                phi = std::atan2(hitPos.z, hitPos.x);
+                if(phi < 0) phi += 2*M_PI;
+                if(t > ray.tmax || hitPos.y < yMin || hitPos.y > yMax || phi > phiMax) return false;
+            }
+
+            res.t = t;
+            res.hitPos = hitPos;
+            res.ray = ray;
+            res.hitObj = const_cast<Cylinder*>(this);
+
+            res.u = phi/phiMax;
+            res.u = 1.0f - res.u;
+            res.v = (hitPos.y - yMin)/(yMax - yMin);
+            res.v = 1.0f - res.v;
+
+            Vec3 dpdu = Vec3(-phiMax*hitPos.z, 0, phiMax*hitPos.x);
+            Vec3 dpdv = Vec3(0, yMax - yMin, 0);
+
+            res.dpdu = dpdu;
+            res.dpdv = dpdv;
+            res.hitNormal = -cross(dpdu, dpdv);
+            res.inside = false;
+            if(dot(ray.direction, res.hitNormal) > 0)
+                res.hitNormal = -res.hitNormal;
+            res = (*objectToWorld)(res);
+            return true;
+        };
 };
 class Box : public Object {
     public:
@@ -187,8 +238,21 @@ class Box : public Object {
             return true;
         };
 };
+class Disk : public Object {
+    public:
+        const float height;
+        const float radius;
+        const float innerRadius;
+        const float phiMax;
+
+        Disk(Transform* objectToWorld, Transform* worldToObject, Material* mat, Texture* tex, const float height, const float radius, const float innerRadius, const float phiMax) : Object(objectToWorld, worldToObject, mat, tex), height(height), radius(radius), innerRadius(innerRadius), phiMax(phiMax) {};
+
+        bool intersect(const Ray& r, Hit& res) const {
+            Ray ray = (*worldToObject)(r);
+            return false;
+        };
+};
 class Cone : public Object {
     public:
-
 };
 #endif

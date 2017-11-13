@@ -45,19 +45,20 @@ int main(int argc, char** argv) {
 
     Image *img = new Image(width, height);
     
-    Point3 camPos = Point3(0, 1, 5);
+    Point3 camPos = Point3(0, 2.0, 4);
     Vec3 camForward = normalize(Point3() - camPos);
-    //Camera *cam = new PinholeCamera(camPos, camForward, 1.0f, 1.5f);
-    Camera *cam = new ThinLensCamera(camPos, camForward, 1.0f, 1.0f, Point3(0, 0, 0), 2.8f);
+    Camera *cam = new PinholeCamera(camPos, camForward, 1.0f, 1.5f);
+    //Camera *cam = new ThinLensCamera(camPos, camForward, 5.0f, 1.5f, Point3(0, 0, 0), 8.0f);
     //Camera *cam = new EquidistantFisheyeCamera(camPos, camForward, 1.0f, 1.0f);
 
     Objects *objs = new Objects();
     Transform t = translate(Vec3(0, -1, 0))*scale(3.0, 1.0, 3.0);
     Transform t_inv = inverse(t);
-    objs->add(new Plane(&t, &t_inv, new Diffuse(0.9f), new ImageTexture("uv_test.png")));
-    Transform t2 = translate(Vec3(0, 0, 0));
+    objs->add(new Plane(&t, &t_inv, new Diffuse(0.9f), new Mono(RGB(1.0f))));
+    Transform t2 = translate(Vec3(0, 0, 0))*rotateX(M_PI/2)*rotateZ(M_PI/4);
     Transform t2_inv = inverse(t2);
-    objs->add(new Sphere(1.0f, &t2, &t2_inv, new Emissive(1.5f), new ImageTexture("uv_test.png"), -1.0f, 1.0f, 2*M_PI));
+    //objs->add(new Box(&t2, &t2_inv, new Glass(1.4f), new Mono(RGB(1.0f)), Point3(-0.5, -0.5, -0.5), Point3(0.5, 0.5, 0.5)));
+    objs->add(new Cylinder(&t2, &t2_inv, new Diffuse(0.9f), new ImageTexture("uv_test.png"), 1.0f, -1.0f, 1.0f, 2*M_PI));
 
     /*
     Transform t2 = translate(Vec3(-3, 0, 0))*rotateZ(M_PI/2)*scale(3.0, 1.0, 3.0);
@@ -139,8 +140,8 @@ int main(int argc, char** argv) {
     }
     */
 
-    //Sky *sky = new IBL("PaperMill_E_3k.hdr");
-    Sky *sky = new simpleSky(0.5f);
+    Sky *sky = new IBL("PaperMill_E_3k.hdr");
+    //Sky *sky = new simpleSky(0.5f);
 
     Render render(cam, objs, sky, img, samples);
     if(normal_output) {
