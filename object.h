@@ -267,7 +267,10 @@ class Disk : public Object {
             float rHit = std::sqrt(dist2);
             res.v = (rHit - innerRadius)/(radius - innerRadius);
             res.v = 1.0f - res.v;
-            res.hitNormal = Normal(0, 1, 0);
+
+            res.dpdu = Vec3(-phiMax*hitPos.z, 0, phiMax*hitPos.x);
+            res.dpdv = (radius - innerRadius) * Vec3(hitPos.x, 0, hitPos.z);
+            res.hitNormal = -cross(res.dpdu, res.dpdv);
             res.inside = false;
             res = (*objectToWorld)(res);
 
@@ -276,5 +279,6 @@ class Disk : public Object {
 };
 class Cone : public Object {
     public:
+
 };
 #endif
