@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
     Point3 camPos = Point3(0, 1, 5);
     Vec3 camForward = normalize(Point3() - camPos);
     //Camera *cam = new PinholeCamera(camPos, camForward, 1.0f, 1.0f);
-    Camera *cam = new ThinLensCamera(camPos, camForward, 3.0f, 1.5f, Point3(0, 0, 0), 8.0f);
+    Camera *cam = new ThinLensCamera(camPos, camForward, 3.0f, 1.5f, Point3(0, 0, 0), 12.0f);
     //Camera *cam = new EquidistantFisheyeCamera(camPos, camForward, 1.0f, 1.0f);
 
     Objects *objs = new Objects();
@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
     Transform t2 = translate(Vec3(0, -1, 0));
     Transform t2_inv = inverse(t2);
     //objs->add(new Box(&t2, &t2_inv, new Glass(1.4f), new Mono(RGB(1.0f)), Point3(-0.5, -0.5, -0.5), Point3(0.5, 0.5, 0.5)));
-    objs->add(new Cone(&t2, &t2_inv, new Diffuse(0.9f), new ImageTexture("uv_test.png"), 2.0f, 1.0f, 2*M_PI));
+    objs->add(new Paraboloid(&t2, &t2_inv, new Diffuse(0.9f), new ImageTexture("uv_test.png"), 1.0f, 1.0f, 0.0f, 1.0f, 2*M_PI));
 
     /*
     Transform t2 = translate(Vec3(-3, 0, 0))*rotateZ(M_PI/2)*scale(3.0, 1.0, 3.0);

@@ -337,4 +337,68 @@ class Cone : public Object {
             return true;
         };
 };
+
+
+class Paraboloid : public Object {
+    public:
+        const float height;
+        const float radius;
+        const float yMin;
+        const float yMax;
+        const float phiMax;
+
+        Paraboloid(Transform* objectToWorld, Transform* worldToObject, Material* mat, Texture* tex, const float height, const float radius, const float yMin, const float yMax, const float phiMax) : Object(objectToWorld, worldToObject, mat, tex), height(height), radius(radius), yMin(yMin), yMax(yMax), phiMax(phiMax) {};
+
+        bool intersect(const Ray& ra, Hit& res) const {
+            Ray ray = (*worldToObject)(ra);
+            float ox = ray.origin.x;
+            float oy = ray.origin.y;
+            float oz = ray.origin.z;
+            float dx = ray.direction.x;
+            float dy = ray.direction.y;
+            float dz = ray.direction.z;
+            float r = radius;
+            float h = height;
+            
+            float a = h/(r*r)*(dx*dx + dz*dz);
+            float b = 2*h/(r*r)*(ox*dx + oz*dz) - dy;
+            float c = h/(r*r)*(ox*ox + oz*oz) - oy;
+            float D = b*b - 4*a*c;
+            if(D < 0) return false;
+            float t0 = (-b - std::sqrt(D))/(2*a);
+            float t1 = (-b + std::sqrt(D))/(2*a);
+            if(t0 > ray.tmax || t1 < ray.tmin) return false;
+            float t = t0;
+            Point3 hitPos = ray(t);
+            float phi = std::atan2(hitPos.z, hitPos.x);
+            if(phi < 0) phi += 2*M_PI;
+            if(t < ray.tmin || hitPos.y < yMin || hitPos.y > yMax || phi > phiMax) {
+                t = t1;
+                hitPos = ray(t);
+                phi = std::atan2(hitPos.z, hitPos.x);
+                if(phi < 0) phi += 2*M_PI;
+                if(t > ray.tmax || hitPos.y < yMin || hitPos.y > yMax || phi > phiMax) return false;
+            }
+
+            res.hitPos = hitPos;
+            res.t = t;
+            res.ray = ray;
+            res.hitObj = const_cast<Paraboloid*>(this);
+
+            res.u = 1.0f - phi/phiMax;
+            res.v = 1.0f - (hitPos.y - yMin)/(yMax - yMin);
+            Vec3 dpdu = Vec3(-phiMax*hitPos.z, 0, phiMax*hitPos.x);
+            Vec3 dpdv = (yMax - yMin) * Vec3(hitPos.x/(2*hitPos.y), 1, hitPos.z/(2*hitPos.y));
+            res.dpdu = dpdu;
+            res.dpdv = dpdv;
+            res.hitNormal = -cross(dpdu, dpdv);
+
+            res.inside = dot(ray.direction, res.hitNormal) > 0;
+            if(res.inside)
+                res.hitNormal = -res.hitNormal;
+
+            res = (*objectToWorld)(res);
+            return true;
+        };
+};
 #endif
