@@ -279,6 +279,62 @@ class Disk : public Object {
 };
 class Cone : public Object {
     public:
+        const float height;
+        const float radius;
+        const float phiMax;
 
+        Cone(Transform* objectToWorld, Transform* worldToObject, Material* mat, Texture* tex, const float height, const float radius, const float phiMax) : Object(objectToWorld, worldToObject, mat, tex), height(height), radius(radius), phiMax(phiMax) {};
+
+        bool intersect(const Ray& ra, Hit& res) const {
+            Ray ray = (*worldToObject)(ra);
+            float dx = ray.direction.x;
+            float dy = ray.direction.y;
+            float dz = ray.direction.z;
+            float ox = ray.origin.x;
+            float oy = ray.origin.y;
+            float oz = ray.origin.z;
+            float h = height;
+            float r = radius;
+
+            float a = (h*h)/(r*r)*(dx*dx + dz*dz) - dy*dy;
+            float b = 2*(h*h)/(r*r)*(ox*dx + oz*dz) - 2*dy*(oy - h);
+            float c = (h*h)/(r*r)*(ox*ox + oz*oz) - (oy*oy - 2*h*oy + h*h);
+            float D = b*b - 4*a*c;
+            if(D < 0) return false; 
+            float t0 = (-b - std::sqrt(D))/(2*a);
+            float t1 = (-b + std::sqrt(D))/(2*a);
+            if(t0 > ray.tmax || t1 < ray.tmin || std::isnan(t0) || std::isnan(t1)) return false;
+            float t = t0;
+            Point3 hitPos = ray(t);
+            float phi = std::atan2(hitPos.z, hitPos.x);
+            if(phi < 0) phi += 2*M_PI;
+            if(t < ray.tmin || hitPos.y > height || hitPos.y < 0 || phi > phiMax) {
+                t = t1;
+                hitPos = ray(t);
+                phi = std::atan2(hitPos.z, hitPos.x);
+                if(phi < 0) phi += 2*M_PI;
+                if(t > ray.tmax || hitPos.y > height || hitPos.y < 0|| phi > phiMax) return false;
+            }
+
+            res.hitPos = hitPos;
+            res.t = t;
+            res.ray = ray;
+            res.hitObj = const_cast<Cone*>(this);
+
+            res.u = phi/phiMax;
+            res.v = std::min(hitPos.y/height, 1.0f) - 0.001f;
+            Vec3 dpdu = Vec3(-phiMax*hitPos.z, 0, phiMax*hitPos.x);
+            Vec3 dpdv = Vec3(-hitPos.x/(1.0f - res.v), height, -hitPos.z/(1.0f - res.v));
+            res.dpdu = dpdu;
+            res.dpdv = dpdv;
+            res.hitNormal = -cross(dpdu, dpdv);
+            
+            res.inside = dot(ray.direction, res.hitNormal) > 0;
+            if(res.inside)
+                res.hitNormal = -res.hitNormal;
+            
+            res = (*objectToWorld)(res);
+            return true;
+        };
 };
 #endif
