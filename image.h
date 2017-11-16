@@ -20,14 +20,14 @@ class Image {
         };
 
         RGB get(int i, int j) const {
-            if(i < 0 || i >= width || j < 0 || j >= height) {
+            if(i < 0 || i >= height || j < 0 || j >= width) {
                 std::cerr << "Invalid access" << std::endl;
                 std::exit(1);
             }
             return data[j + width*i];
         };
         void set(int i, int j, const RGB& col) {
-            if(i < 0 || i >= width || j < 0 || j >= height) {
+            if(i < 0 || i >= height || j < 0 || j >= width) {
                 std::cerr << "Invalid access" << std::endl;
                 std::exit(1);
             }
@@ -41,8 +41,8 @@ class Image {
             file << width << " " << height << std::endl;
             file << "255" << std::endl;
 
-            for(int j = 0; j < height; j++) {
-                for(int i = 0; i < width; i++) {
+            for(int i = 0; i < height; i++) {
+                for(int j = 0; j < width; j++) {
                     RGB col = clamp(this->get(i, j), RGB(0), RGB(1));
                     file << (int)(255.f*col.r) << " " << (int)(255.f*col.g) << " " << (int)(255.f*col.b) << std::endl;
                 }

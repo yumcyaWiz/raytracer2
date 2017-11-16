@@ -71,8 +71,8 @@ class Render {
             for(int k = 0; k < samples; k++) {
                 for(int i = 0; i < img->height; i++) {
                     for(int j = 0; j < img->width; j++) {
-                        float u = (2.0f*(i + rnd()) - img->height)/img->height;
-                        float v = (2.0f*(j + rnd()) - img->width)/img->height;
+                        float v = (2.0f*(i + rnd()) - img->height)/img->height;
+                        float u = (2.0f*(j + rnd()) - img->width)/img->height;
                         float w;
                         Ray ray;
                         if(cam->getRay(u, v, ray, w))
@@ -89,8 +89,8 @@ class Render {
         void render_normal() {
             for(int i = 0; i < img->height; i++) {
                 for(int j = 0; j < img->width; j++) {
-                    float u = (2.0*i - img->height)/img->height;
-                    float v = (2.0*j - img->width)/img->width;
+                    float v = (2.0*i - img->height)/img->height;
+                    float u = (2.0*j - img->width)/img->width;
                     float w;
                     Ray ray;
                     if(cam->getRay(u, v, ray, w)) {
