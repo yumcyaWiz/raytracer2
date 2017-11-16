@@ -401,4 +401,68 @@ class Paraboloid : public Object {
             return true;
         };
 };
+
+
+class Hyperboloid : public Object {
+    public:
+        const float x1;
+        const float x2;
+        const float y1;
+        const float y2;
+        const float z1;
+        const float z2;
+        const float phiMax;
+
+        Hyperboloid(Transform* objectToWorld, Transform* worldToObject, Material* mat, Texture* tex, const float x1, const float x2, const float y1, const float y2, const float z1, const float z2, const float phiMax) : Object(objectToWorld, worldToObject, mat, tex), x1(x1), x2(x2), y1(y1), y2(y2), z1(z1), z2(z2), phiMax(phiMax) {};
+
+        bool intersect(const Ray& r, Hit& res) const {
+            Ray ray = (*worldToObject)(r);
+            float ox = ray.origin.x;
+            float oy = ray.origin.y;
+            float oz = ray.origin.z;
+            float dx = ray.direction.x;
+            float dy = ray.direction.y;
+            float dz = ray.direction.z;
+            
+            float a = dx*dx + dy*dy + dz*dz;
+            float b = 2*(ox*dx + oz*dz - oy*dy);
+            float c = ox*ox + oz*oz - oy*oy + 1;
+            float D = b*b - 4*a*c;
+            if(D < 0) return false;
+            float t0 = (-b - std::sqrt(D))/(2*a);
+            float t1 = (-b + std::sqrt(D))/(2*a);
+            if(t0 > ray.tmax || t1 < ray.tmin) return false;
+            float t = t0;
+            Point3 hitPos = ray(t);
+            float phi = std::atan2(hitPos.z, hitPos.x);
+            if(phi < 0) phi += 2*M_PI;
+            if(t < ray.tmin || hitPos.x < x1 || hitPos.x > x2 || hitPos.y < y1 || hitPos.y > y2 || hitPos.z < z1 || hitPos.z > z2 || phi > phiMax) {
+                t = t1;
+                hitPos = ray(t);
+                phi = std::atan2(hitPos.z, hitPos.x);
+                if(phi < 0) phi += 2*M_PI;
+                if(t > ray.tmax || hitPos.x < x1 || hitPos.x > x2 || hitPos.y < y1 || hitPos.y > y2 || hitPos.z < z1 || hitPos.z > z2 || phi > phiMax) return false;
+            }
+
+            res.hitPos = hitPos;
+            res.t = t;
+            res.ray = ray;
+            res.hitObj = const_cast<Hyperboloid*>(this);
+            
+            res.u = 1.0f - phi/phiMax;
+            res.v = 0.0f;
+            Vec3 dpdu = Vec3();
+            Vec3 dpdv = Vec3();
+            res.dpdu = dpdu;
+            res.dpdv = dpdv;
+            res.hitNormal = Vec3(0, 1, 0);
+
+            res.inside = dot(ray.direction, res.hitNormal) > 0;
+            if(res.inside)
+                res.hitNormal = -res.hitNormal;
+
+            res = (*objectToWorld)(res);
+            return true;
+        };
+};
 #endif
